@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "refill-user-guide-router",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-14",
+  "routes": [
+    {
+      "pattern": "endet.xyz/refill-user-guide*",
+      "zone_name": "endet.xyz"
+    }
+  ],
+  "vars": {
+    "PAGES_ORIGIN": "https://refill-station-guide.pages.dev"
+  }
+}
