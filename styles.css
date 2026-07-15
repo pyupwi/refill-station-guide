@@ -142,6 +142,16 @@ h1 {
   margin: 0;
 }
 
+.manual-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 5 / 3;
+  border: 1px solid #202825;
+  border-radius: 8px;
+  background: #000;
+  object-fit: cover;
+}
+
 .image-placeholder {
   display: grid;
   width: 100%;

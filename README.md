@@ -16,23 +16,28 @@ python3 -m http.server 8767
 
 ## 화면 이미지
 
-실제 화면을 확보하면 아래 파일명으로 `assets/`에 추가한다.
+UI 화면은 프로젝트의 맥 미리보기에서 생성해 `assets/`에 포함한다. 실제 설치 사진은
+별도로 촬영해 추가한다.
 
 | 파일 | 내용 |
 | --- | --- |
-| `01-dispense.png` | 디스펜스 기본 화면과 중앙 리필량 |
+| `01-dispense.png` | 디스펜스 기본 화면과 중앙 리필량 (생성됨) |
 | `02-container.jpg` | 노즐 아래에 빈 용기를 놓은 실제 모습 |
-| `03-adjust.png` | 위·아래 스와이프 리필량 조절 화면 |
-| `04-confirm.png` | 큰 리필 시작 확인 화면 |
-| `05-progress.png` | 액체가 차오르는 리필 진행 화면 |
-| `06-wait.png` | 마무리 대기 화면 |
-| `07-paused.png` | 일시정지와 빨간 정지 버튼 화면 |
+| `03-adjust.png` | 위·아래 스와이프 리필량 조절 화면 (생성됨) |
+| `04-confirm.png` | 큰 리필 시작 확인 화면 (생성됨) |
+| `05-progress.png` | 액체가 차오르는 리필 진행 화면 (생성됨) |
+| `06-wait.png` | 마무리 대기 화면 (생성됨) |
+| `07-paused.png` | 일시정지와 빨간 정지 버튼 화면 (생성됨) |
 
-현재 `[이미지]` 자리의 `image-placeholder` 블록을 다음 형식으로 교체한다.
+UI 문구나 화면 구성이 변경되면 다음 명령으로 생성 이미지를 갱신한다.
 
-```html
-<img class="manual-image" src="assets/01-dispense.png" alt="중앙에 리필량이 표시된 화면">
+```zsh
+cd /Users/COSMICOMICHE/Documents/WS_Esp32_pump_dispenser/pump_dispenser/tools/ui_preview
+./export_guide_images.sh /Users/COSMICOMICHE/Documents/WS_Esp32_pump_dispenser/refill-station-guide/assets
 ```
+
+`02-container.jpg`만은 실제 노즐과 용기 배치를 보여주는 사진이므로 현장에서 촬영해
+추가한다.
 
 ## Cloudflare Pages
 
