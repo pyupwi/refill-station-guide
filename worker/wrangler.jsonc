@@ -7,6 +7,10 @@
     {
       "pattern": "endet.xyz/refill-user-guide*",
       "zone_name": "endet.xyz"
+    },
+    {
+      "pattern": "endet.xyz/refill-admin-guide*",
+      "zone_name": "endet.xyz"
     }
   ],
   "vars": {

@@ -1,0 +1,6 @@
+/refill-user-guide /refill-user-guide/ 308
+/refill-admin-guide /refill-admin-guide/ 308
+/refill-user-guide/ /index.html 200
+/refill-admin-guide/ /admin/index.html 200
+/refill-user-guide/* /:splat 200
+/refill-admin-guide/* /admin/:splat 200
