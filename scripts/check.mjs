@@ -4,6 +4,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 import router from '../worker/src/index.js';
+import './check-simulator.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => readFileSync(resolve(root, path), 'utf8');
@@ -44,7 +45,22 @@ for (const version of manifest.versions) {
   assert(read(`admin/${version}/index.html`).includes(`data-version="${version}"`));
 }
 assert(read('index.html').includes('리필재개'));
-assert(read('styles.css').includes('admin/styles.css'));
+assert(read('index.html').includes('src="simulator.mjs"'));
+assert(read('index.html').includes('controls muted loop playsinline preload="none"'));
+assert(read('styles.css').includes('prefers-reduced-motion'));
+for (const [, id] of read('simulator.mjs').matchAll(/get\('([^']+)'\)/g)) {
+  assert(read('index.html').includes(`id="${id}"`), `Simulator element missing: ${id}`);
+}
+const movie = readFileSync(resolve(root, 'admin/3.5.3/images/dispense-demo.mp4'));
+const atoms = [];
+for (let offset = 0; offset < movie.length;) {
+  const shortSize = movie.readUInt32BE(offset);
+  const size = shortSize === 1 ? Number(movie.readBigUInt64BE(offset + 8)) : shortSize || movie.length - offset;
+  assert(size >= 8 && offset + size <= movie.length, 'Invalid video container');
+  atoms.push(movie.toString('ascii', offset + 4, offset + 8)); offset += size;
+}
+assert.equal(atoms[0], 'ftyp');
+assert(atoms.includes('moov') && atoms.indexOf('moov') < atoms.indexOf('mdat'), 'Video must support progressive playback');
 
 const env = { PAGES_ORIGIN: 'https://refill-station-guide.pages.dev' };
 const realFetch = globalThis.fetch;

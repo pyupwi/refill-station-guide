@@ -13,8 +13,10 @@
 ## 파일 구성
 
 - `index.html`: 고객 안내
-- `styles.css`: 공유 스타일 진입점
-- `admin/styles.css`: 두 설명서의 공유 스타일
+- `styles.css`: 고객 안내의 화면 중심 레이아웃과 가상 체험 스타일
+- `simulator.mjs`: 기기 연결 없는 고객 조작 체험
+- `demo.ko.vtt`: 시연 영상의 한국어 안내 자막
+- `admin/styles.css`: 관리자 설명서 스타일
 - `admin/index.html`: 현재 관리자 설명서로 이동
 - `admin/3.5.3/index.html`: 3.5.3 관리자 설명서의 독립 원본
 - `admin/3.5.3/images/`: 해당 버전의 화면 예시 (고객 안내에서도 참조)
@@ -24,7 +26,9 @@
 - `SOURCE_NOTES.md`: 작성 근거와 검증 범위
 - `scripts/capture_screens.py`: 펌웨어 원본을 바꾸지 않는 화면 캡처 도구
 
-정적 HTML·CSS와 작은 버전 선택 스크립트만 사용한다. 사이트 빌드 도구는 필요 없다.
+정적 HTML·CSS, 고객 체험과 버전 선택 스크립트를 사용한다. 사이트 빌드 도구는 필요 없다.
+고객 안내는 큰 체험 화면과 6개의 화면별 안내 카드로 구성한다. 직접 체험과 실제 HMI
+미리보기로 만든 시연 영상을 전환할 수 있다.
 
 ## 내용 갱신과 새 버전 추가
 
@@ -55,6 +59,8 @@ node scripts/check.mjs
 버전 이동과 실패 처리,
 Worker의 두 경로 및 리다이렉트를 확인한다. 가상의 다음 버전은 단위 검사 안에서만
 사용한다. 화면 렌더링 또는 실제 펌프의 동작·토출 정확도를 검증하는 검사는 아니다.
+고객 시뮬레이션 검사는 같은 명령에서 함께 실행하며, 양 제한·확인·일시정지·재개·정지·
+완료·대기·초기화와 스와이프/키보드 조작, 영상 전환, 백그라운드 중단을 확인한다.
 
 Apple Silicon에서는 Node 등 실행 도구가 ARM 네이티브인지 `file -L`로 확인한다.
 Worker는 Node 22 이상을 사용한다.
@@ -66,6 +72,8 @@ Apple Silicon Mac의 기존 펌웨어 미리보기 도구와 ARM Homebrew SDL2�
 
 ```sh
 python3 scripts/capture_screens.py /path/to/pump_dispenser
+# 영상만 갱신: 원래 스크린샷 파일은 다시 만들지 않는다.
+python3 scripts/capture_screens.py /path/to/pump_dispenser --video
 # CMake 경로가 다르면 CMAKE_BIN=/path/to/native/cmake를 지정한다.
 node scripts/check.mjs
 ```
@@ -73,6 +81,14 @@ node scripts/check.mjs
 임시 디렉터리에서 화면만 실행하며 하드웨어 출력은 하지 않는다. 캡처된 모든 이미지를
 열어 의도한 화면·버튼·단위가 맞는지 확인한 뒤 게시한다. 측정값과 설정은 예시이므로
 실제 장치 촬영이나 토출 정확도 검증 결과로 설명하지 않는다.
+
+영상은 같은 화면을 초당 20장씩 캡처해 macOS AVFoundation으로 H.264 MP4로 만든다.
+`scripts/encode_video.swift`는 완성된 영상을 다시 디코딩해 검토용 프레임도 출력한다.
+영상 파일은 `admin/3.5.3/images/dispense-demo.mp4`이며, 캡처 순서를 바꾸면 자막 시간도 맞춘다.
+
+고객 시뮬레이션은 g 표시, 100 g 간격, 100~3,000 g 범위, 시작 확인을 사용하는 조작 예시다.
+토출은 연습용 6초 속도로 진행하며 실제 보정이나 펌프 성능을 계산하지 않는다.
+백엔드·장치 통신·입력값 저장은 없으며, 영상은 사용자가 선택했을 때만 재생한다.
 
 ## 배포
 

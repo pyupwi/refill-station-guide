@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Render manual examples from the current firmware HMI using its existing preview.
 
-Usage: CMAKE_BIN=/path/to/native/cmake python3 scripts/capture_screens.py /path/to/pump_dispenser
+Usage: CMAKE_BIN=/path/to/native/cmake python3 scripts/capture_screens.py /path/to/pump_dispenser [--video]
 Requires macOS on Apple Silicon, Xcode command line tools and ARM Homebrew SDL2.
 Only a temporary copy of the preview fixtures is changed; firmware stays untouched.
 """
@@ -38,6 +38,7 @@ def replace_once(path, before, after):
 def main():
     assert platform.system() == "Darwin" and platform.machine() == "arm64"
     firmware = Path(sys.argv[1]).resolve()
+    video = "--video" in sys.argv[2:]
     header = firmware / "firmware/controller/components/product_metadata/firmware_version.h"
     version = re.search(r'#define FIRMWARE_VERSION "(\d+\.\d+\.\d+)"', header.read_text())[1]
     output = Path(__file__).resolve().parents[1] / "admin" / version / "images"
@@ -75,6 +76,36 @@ def main():
         run_for(160);
         return ui_navigation_current() == SCR_SETTINGS_INPUT &&
                find_button_with_label(lv_scr_act(), "저장") != NULL;''')
+        if video:
+            # Record the real HMI frame by frame through the existing input helpers.
+            replace_once(main_source, "int main(int argc, char **argv)", '''static unsigned guide_frame;
+static bool guide_record(const char *directory, unsigned count)
+{
+    for (unsigned i = 0; i < count; ++i) {
+        run_for(50);
+        char path[1024];
+        snprintf(path, sizeof(path), "%s/%04u.bmp", directory, guide_frame++);
+        if (sdl_save_bmp(path) != 0) return false;
+    }
+    return true;
+}
+static bool guide_video(const char *directory)
+{
+    if (!guide_record(directory, 20)) return false;
+    click_at(400, 240);
+    if (!guide_record(directory, 35)) return false;
+    click_at(270, 375);
+    if (!guide_record(directory, 36)) return false;
+    click_at(120, 240);
+    if (!paused_controls_are_clear("리필재개", "정지", "화면을 탭해서 재개") ||
+        !guide_record(directory, 30)) return false;
+    if (!click_button_at_rendered_position("리필재개")) return false;
+    return guide_record(directory, 210) && ui_navigation_current() == SCR_DISPENSE;
+}
+int main(int argc, char **argv)''')
+            replace_once(main_source, "preview_app_set_scenario(argv[2])", 'preview_app_set_scenario("dispense")')
+            replace_once(main_source, "        if (!capture_scenario(argv[2], false)) {",
+                         "        return guide_video(argv[3]) ? 0 : 1;\n        if (!capture_scenario(argv[2], false)) {")
         build = Path(temporary) / "build"
         sdk = run("xcrun", "--sdk", "macosx", "--show-sdk-path", capture_output=True).stdout.strip()
         run(cmake, "-S", str(preview), "-B", str(build), "-DCMAKE_OSX_ARCHITECTURES=arm64",
@@ -86,6 +117,20 @@ def main():
         binary = build / "refill_station_ui_preview"
         assert "arm64" in run("file", "-L", str(binary), capture_output=True).stdout
         output.mkdir(exist_ok=True)
+        if video:
+            frames = Path(temporary) / "frames"
+            frames.mkdir()
+            run(str(binary), "--capture", "guide-video", str(frames),
+                env={**os.environ, "SDL_VIDEODRIVER": "dummy", "SDL_RENDER_DRIVER": "software"})
+            swift = run("xcrun", "--find", "swiftc", capture_output=True).stdout.strip()
+            assert "arm64" in run("file", "-L", swift, capture_output=True).stdout
+            encoder = Path(temporary) / "encoder"
+            run(swift, "-O", "-sdk", sdk, "-target", "arm64-apple-macosx13.0", str(Path(__file__).with_name("encode_video.swift")), "-o", str(encoder))
+            movie = Path(temporary) / "dispense-demo.mp4"
+            review = tempfile.mkdtemp(prefix="refill-video-review-")
+            run(str(encoder), str(frames), str(movie), review)
+            shutil.copyfile(movie, output / movie.name)
+            return
         for scenario in SCENARIOS:
             bmp = Path(temporary) / f"{scenario}.bmp"
             png = output / f"{scenario}.png"
