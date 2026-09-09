@@ -8,6 +8,7 @@
 고객 안내는 디스펜스 이용만 설명한다. 관리자 안내는 기기의 터치 화면을 기준으로
 운영·캘리브레이션·설정·취급을 설명한다. 두 안내 모두 개발 중인 저울·기기 Web 기능은
 포함하지 않는다. 기존 화면 이미지와 레이아웃은 사용하지 않는다.
+3.5.3 화면 코드의 미리보기에서 새로 캡처한 스크린샷을 양쪽 설명서에 제공한다.
 
 ## 파일 구성
 
@@ -16,10 +17,12 @@
 - `admin/styles.css`: 두 설명서의 공유 스타일
 - `admin/index.html`: 현재 관리자 설명서로 이동
 - `admin/3.5.3/index.html`: 3.5.3 관리자 설명서의 독립 원본
+- `admin/3.5.3/images/`: 해당 버전의 화면 예시 (고객 안내에서도 참조)
 - `admin/versions.json`: 제공하는 버전 목록과 최신 버전
 - `admin/versions.js`: 버전 드롭다운과 이동, 목록 오류 처리
 - `worker/`: endet.xyz의 두 설명서 경로만 Pages로 전달
 - `SOURCE_NOTES.md`: 작성 근거와 검증 범위
+- `scripts/capture_screens.py`: 펌웨어 원본을 바꾸지 않는 화면 캡처 도구
 
 정적 HTML·CSS와 작은 버전 선택 스크립트만 사용한다. 사이트 빌드 도구는 필요 없다.
 
@@ -29,6 +32,7 @@
 
 1. `admin/<새 버전>/index.html`을 만들고 해당 버전의 실제 동작으로 내용을 작성한다.
    이전 버전의 조작 설명을 새 기능으로 덮어쓰지 않는다.
+   새 화면은 해당 버전의 `images/`에 보관하고 이전 버전 이미지는 유지한다.
 2. `data-version`, 제목, canonical 주소, 표시 버전, 문서 갱신일을 맞춘다.
 3. `admin/versions.json`의 `versions` 맨 앞에 새 버전을 추가하고 `latest`를 바꾼다.
    기존 버전은 목록과 파일을 유지한다. 모든 설명서의 드롭다운이 이 목록을 읽는다.
@@ -47,12 +51,28 @@ python3 -m http.server 8767 --bind 127.0.0.1
 node scripts/check.mjs
 ```
 
-`check.mjs`는 설명서 앵커·파일 연결·제외 범위, 버전 이동과 실패 처리,
+`check.mjs`는 설명서 앵커·파일 연결·제외 범위, 스크린샷 크기·대체 텍스트·확대 링크,
+버전 이동과 실패 처리,
 Worker의 두 경로 및 리다이렉트를 확인한다. 가상의 다음 버전은 단위 검사 안에서만
 사용한다. 화면 렌더링 또는 실제 펌프의 동작·토출 정확도를 검증하는 검사는 아니다.
 
 Apple Silicon에서는 Node 등 실행 도구가 ARM 네이티브인지 `file -L`로 확인한다.
 Worker는 Node 22 이상을 사용한다.
+
+## 화면 스크린샷 갱신
+
+Apple Silicon Mac의 기존 펌웨어 미리보기 도구와 ARM Homebrew SDL2를 사용한다.
+현재 펌웨어 버전에 해당하는 관리자 설명서 디렉터리가 먼저 있어야 한다.
+
+```sh
+python3 scripts/capture_screens.py /path/to/pump_dispenser
+# CMake 경로가 다르면 CMAKE_BIN=/path/to/native/cmake를 지정한다.
+node scripts/check.mjs
+```
+
+임시 디렉터리에서 화면만 실행하며 하드웨어 출력은 하지 않는다. 캡처된 모든 이미지를
+열어 의도한 화면·버튼·단위가 맞는지 확인한 뒤 게시한다. 측정값과 설정은 예시이므로
+실제 장치 촬영이나 토출 정확도 검증 결과로 설명하지 않는다.
 
 ## 배포
 

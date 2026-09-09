@@ -12,6 +12,7 @@ assert(manifest.versions.includes(manifest.latest));
 assert.equal(new Set(manifest.versions).size, manifest.versions.length);
 assert(read('admin/index.html').includes(`url=${manifest.latest}/`));
 const pages = ['index.html', ...manifest.versions.map(v => `admin/${v}/index.html`)];
+let screenCount = 0;
 for (const path of pages) {
   const html = read(path);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
@@ -25,6 +26,18 @@ for (const path of pages) {
     if (/^https?:/.test(target)) continue;
     assert(existsSync(resolve(root, dirname(path), target)), `Missing asset: ${path} -> ${target}`);
   }
+  const screens = [...html.matchAll(/<img\b[^>]+>/g)];
+  assert(screens.length > 0, `Screenshots missing: ${path}`);
+  for (const [tag] of screens) {
+    const src = /src="([^"]+)"/.exec(tag)[1];
+    assert(/alt="[^"]+"/.test(tag) && /width="800"/.test(tag) && /height="480"/.test(tag), tag);
+    assert(html.includes(`href="${src}"`), `Full-size screenshot link missing: ${src}`);
+    const png = readFileSync(resolve(root, dirname(path), src));
+    assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', src);
+    assert.equal(png.readUInt32BE(16), 800, src);
+    assert.equal(png.readUInt32BE(20), 480, src);
+  }
+  screenCount += screens.length;
 }
 for (const version of manifest.versions) {
   assert(/^\d+\.\d+\.\d+$/.test(version));
@@ -82,4 +95,4 @@ for (const [payload, fail] of [[{}, true], [{ latest: '../bad', versions: ['3.5.
   assert(result.status.textContent.includes('현재 설명서는 계속 읽을 수 있습니다'));
   assert.equal(result.select.children, undefined);
 }
-console.log(`PASS: ${pages.length} guide pages, anchors/assets, version navigation/fallback, both public routes and canonical redirects.`);
+console.log(`PASS: ${pages.length} guide pages, ${screenCount} screenshots with full-size links, anchors/assets, version navigation/fallback, both public routes and canonical redirects.`);
