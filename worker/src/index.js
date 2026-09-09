@@ -20,6 +20,31 @@ export default {
     origin.pathname = guide.directory + incoming.pathname.slice(guide.prefix.length);
     origin.search = incoming.search;
     const response = await fetch(new Request(origin, request), { redirect: 'manual' });
+
+    // Pages currently ignores Range. Supply single-byte ranges for small guide videos.
+    // ponytail: buffer clips up to 2 MiB; move larger videos to storage with native range support.
+    const range = request.headers.get('Range')?.match(/^bytes=(\d*)-(\d*)$/i);
+    const size = Number(response.headers.get('Content-Length'));
+    const ifRange = request.headers.get('If-Range');
+    if (request.method === 'GET' && response.status === 200 &&
+        response.headers.get('Content-Type')?.startsWith('video/mp4') &&
+        !response.headers.has('Content-Encoding') && size > 0 && size <= 2 * 1024 * 1024 &&
+        range && (range[1] || range[2]) &&
+        (!ifRange || ifRange === response.headers.get('ETag') || ifRange === response.headers.get('Last-Modified'))) {
+      const start = range[1] ? Number(range[1]) : Math.max(0, size - Number(range[2]));
+      const end = range[1] && range[2] ? Math.min(size - 1, Number(range[2])) : size - 1;
+      const headers = new Headers(response.headers);
+      headers.set('Accept-Ranges', 'bytes');
+      if (start >= size || start > end) {
+        headers.set('Content-Range', `bytes */${size}`);
+        headers.set('Content-Length', '0');
+        return new Response(null, { status: 416, headers });
+      }
+      const bytes = await response.arrayBuffer();
+      headers.set('Content-Range', `bytes ${start}-${end}/${size}`);
+      headers.set('Content-Length', String(end - start + 1));
+      return new Response(bytes.slice(start, end + 1), { status: 206, headers });
+    }
     const location = response.headers.get('Location');
     if (!location) return response;
 

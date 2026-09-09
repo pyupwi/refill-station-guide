@@ -61,6 +61,7 @@ for (let offset = 0; offset < movie.length;) {
 }
 assert.equal(atoms[0], 'ftyp');
 assert(atoms.includes('moov') && atoms.indexOf('moov') < atoms.indexOf('mdat'), 'Video must support progressive playback');
+assert(movie.length <= 2 * 1024 * 1024, 'Use native range storage for larger videos');
 
 const env = { PAGES_ORIGIN: 'https://refill-station-guide.pages.dev' };
 const realFetch = globalThis.fetch;
@@ -81,6 +82,28 @@ try {
   }
   for (const path of ['/', '/shop/', '/refill-admin-guide-other/', '/refill-user-guide-old/']) {
     assert.equal((await router.fetch(new Request(`https://endet.xyz${path}`), env)).status, 404);
+  }
+  globalThis.fetch = async request => {
+    observed = request;
+    return new Response('0123456789', { headers: { 'Content-Type': 'video/mp4', 'Content-Length': '10', ETag: '"clip"' } });
+  };
+  for (const prefix of ['/refill-user-guide', '/refill-admin-guide']) {
+    for (const [range, status, body, contentRange] of [
+      ['bytes=0-1', 206, '01', 'bytes 0-1/10'], ['bytes=4-', 206, '456789', 'bytes 4-9/10'],
+      ['bytes=-3', 206, '789', 'bytes 7-9/10'], ['bytes=7-999', 206, '789', 'bytes 7-9/10'],
+      ['bytes=10-', 416, '', 'bytes */10'], ['bytes=8-2', 416, '', 'bytes */10'],
+      ['bytes=-0', 416, '', 'bytes */10'], ['bytes=0-1,4-5', 200, '0123456789', null],
+      ['invalid', 200, '0123456789', null],
+    ]) {
+      const partial = await router.fetch(new Request(`https://endet.xyz${prefix}/demo.mp4`, { headers: { Range: range } }), env);
+      assert.equal(observed.headers.get('Range'), range);
+      assert.equal(partial.status, status, range);
+      assert.equal(partial.headers.get('Content-Range'), contentRange, range);
+      assert.equal(await partial.text(), body, range);
+    }
+    const stale = await router.fetch(new Request(`https://endet.xyz${prefix}/demo.mp4`, { headers: { Range: 'bytes=0-1', 'If-Range': '"old"' } }), env);
+    assert.equal(stale.status, 200);
+    assert.equal(await stale.text(), '0123456789');
   }
   globalThis.fetch = async () => new Response(null, { status: 308, headers: { Location: '/admin/3.5.3/?q=1' } });
   const canonical = await router.fetch(new Request('https://endet.xyz/refill-admin-guide/3.5.3'), env);

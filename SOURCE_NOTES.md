@@ -91,3 +91,9 @@
 `scripts/check-simulator.mjs`는 조작 상태와 실제 이벤트 연결을 브라우저 없는 간단한
 DOM 대역으로 검사하며, 주 검사 명령에 포함된다.
 웹사이트의 브라우저 렌더링과 실제 펌프의 동작·토출 정확도 시험은 이번 설명서 작업의 검증이 아니다.
+
+게시 확인 중 Pages 원본과 공식 주소 모두 영상의 Range 요청에 전체 200 응답을 반환했다.
+[Cloudflare Pages 공식 문서](https://developers.cloudflare.com/pages/configuration/serving-pages/#behavior)에도
+현재 같은 동작이 명시되어 있다. 공식 주소의 기존 Worker에 2 MiB 이하 MP4의 단일 바이트
+범위 응답을 추가해 재생 위치 이동을 지원한다. 범위·접미 범위·초과 범위·If-Range를 검사하며,
+더 큰 영상은 기본 저장소의 범위 응답을 사용하도록 옮겨야 한다.
