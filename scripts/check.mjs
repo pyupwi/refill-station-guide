@@ -16,6 +16,7 @@ const pages = ['index.html', ...manifest.versions.map(v => `admin/${v}/index.htm
 let screenCount = 0;
 for (const path of pages) {
   const html = read(path);
+  assert(!html.includes('endet-symbol-geist-rounded.svg'), `Symbol must stay off guide pages: ${path}`);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
   assert.equal(new Set(ids).size, ids.length, `Duplicate anchors: ${path}`);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, path);
@@ -88,7 +89,7 @@ try {
     const redirect = await router.fetch(new Request(`https://endet.xyz${prefix}?from=qr`), env);
     assert.equal(redirect.status, 308);
     assert.equal(redirect.headers.get('Location'), `https://endet.xyz${prefix}/?from=qr`);
-    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json', '/assets/endet-symbol-geist-rounded.svg', '/fonts/Geist-Variable.woff2']) {
+    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2']) {
       await router.fetch(new Request(`https://endet.xyz${prefix}${suffix}?a=1`), env);
       assert.equal(observed.url, `${env.PAGES_ORIGIN}${directory}${suffix}?a=1`);
     }

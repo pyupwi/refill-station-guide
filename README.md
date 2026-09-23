@@ -17,7 +17,7 @@
 - `simulator.mjs`: 기기 연결 없는 고객 조작 체험
 - `demo.ko.vtt`: 시연 영상의 한국어 안내 자막
 - `admin/styles.css`: 관리자 설명서 스타일
-- `assets/`: 공식 로고·심볼 SVG 원본 (머리글, 하단 연락처, 파비콘)
+- `assets/`: 설명서에 쓰는 워드마크·연락처 로고 SVG
 - `fonts/`: Vercel Geist Sans 가변 웹폰트와 SIL OFL 1.1 라이선스
 - `admin/index.html`: 현재 관리자 설명서로 이동
 - `admin/3.5.3/index.html`: 3.5.3 관리자 설명서의 독립 원본
