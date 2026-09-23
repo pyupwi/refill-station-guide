@@ -27,7 +27,9 @@ for (const path of pages) {
     if (/^https?:/.test(target)) continue;
     assert(existsSync(resolve(root, dirname(path), target)), `Missing asset: ${path} -> ${target}`);
   }
-  const screens = [...html.matchAll(/<img\b[^>]+>/g)];
+  const images = [...html.matchAll(/<img\b[^>]+>/g)];
+  for (const [tag] of images) assert(/alt="[^"]*"/.test(tag), tag);
+  const screens = images.filter(([tag]) => /width="800"/.test(tag));
   assert(screens.length > 0, `Screenshots missing: ${path}`);
   for (const [tag] of screens) {
     const src = /src="([^"]+)"/.exec(tag)[1];

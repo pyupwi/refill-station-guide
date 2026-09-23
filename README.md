@@ -17,6 +17,8 @@
 - `simulator.mjs`: 기기 연결 없는 고객 조작 체험
 - `demo.ko.vtt`: 시연 영상의 한국어 안내 자막
 - `admin/styles.css`: 관리자 설명서 스타일
+- `assets/`: 공식 로고·심볼 SVG 원본 (머리글, 하단 연락처, 파비콘)
+- `fonts/`: Vercel Geist Sans 가변 웹폰트와 SIL OFL 1.1 라이선스
 - `admin/index.html`: 현재 관리자 설명서로 이동
 - `admin/3.5.3/index.html`: 3.5.3 관리자 설명서의 독립 원본
 - `admin/3.5.3/images/`: 해당 버전의 화면 예시 (고객 안내에서도 참조)
@@ -27,6 +29,7 @@
 - `scripts/capture_screens.py`: 펌웨어 원본을 바꾸지 않는 화면 캡처 도구
 
 정적 HTML·CSS, 고객 체험과 버전 선택 스크립트를 사용한다. 사이트 빌드 도구는 필요 없다.
+로고는 `assets/`의 SVG를 그대로 교체하고, 글꼴은 두 CSS의 `@font-face`와 `font-family`에서 조정한다. Geist에 없는 한글은 Apple SD Gothic Neo·Noto Sans KR·시스템 글꼴로 표시한다.
 고객 안내는 큰 체험 화면과 6개의 화면별 안내 카드로 구성한다. 직접 체험과 실제 HMI
 미리보기로 만든 시연 영상을 전환할 수 있다.
 
