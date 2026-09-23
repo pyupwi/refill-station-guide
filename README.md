@@ -30,6 +30,7 @@
 
 정적 HTML·CSS, 고객 체험과 버전 선택 스크립트를 사용한다. 사이트 빌드 도구는 필요 없다.
 로고는 `assets/`의 SVG를 그대로 교체하고, 글꼴은 두 CSS의 `@font-face`와 `font-family`에서 조정한다. Geist에 없는 한글은 Apple SD Gothic Neo·Noto Sans KR·시스템 글꼴로 표시한다.
+관리자 공식 주소가 `/refill-admin-guide/` 아래에서 제공되므로 관리자용 SVG와 글꼴은 `admin/assets/`, `admin/fonts/`에도 같은 파일을 둔다.
 고객 안내는 큰 체험 화면과 6개의 화면별 안내 카드로 구성한다. 직접 체험과 실제 HMI
 미리보기로 만든 시연 영상을 전환할 수 있다.
 

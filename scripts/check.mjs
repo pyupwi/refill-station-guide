@@ -66,6 +66,20 @@ assert(atoms.includes('moov') && atoms.indexOf('moov') < atoms.indexOf('mdat'), 
 assert(movie.length <= 2 * 1024 * 1024, 'Use native range storage for larger videos');
 
 const env = { PAGES_ORIGIN: 'https://refill-station-guide.pages.dev' };
+const adminPage = new URL('https://endet.xyz/refill-admin-guide/3.5.3/');
+const adminCss = new URL('../styles.css', adminPage);
+const brandFiles = [
+  ...[...read('admin/3.5.3/index.html').matchAll(/(?:href|src)="([^"]+\.svg)"/g)].map(([, path]) => [path, adminPage]),
+  [read('admin/styles.css').match(/url\("([^"]+\.woff2)"\)/)[1], adminCss],
+];
+for (const [path, base] of brandFiles) {
+  const publicPath = new URL(path, base).pathname;
+  assert(publicPath.startsWith('/refill-admin-guide/'), `Asset escaped admin route: ${publicPath}`);
+  const file = resolve(root, 'admin' + publicPath.slice('/refill-admin-guide'.length));
+  assert(existsSync(file), `Missing public admin asset: ${publicPath}`);
+  const bytes = readFileSync(file);
+  assert(bytes.subarray(0, 4).toString() === (path.endsWith('.svg') ? '<svg' : 'wOF2'), `Wrong asset type: ${publicPath}`);
+}
 const realFetch = globalThis.fetch;
 let observed;
 globalThis.fetch = async request => { observed = request; return new Response('upstream'); };
@@ -74,7 +88,7 @@ try {
     const redirect = await router.fetch(new Request(`https://endet.xyz${prefix}?from=qr`), env);
     assert.equal(redirect.status, 308);
     assert.equal(redirect.headers.get('Location'), `https://endet.xyz${prefix}/?from=qr`);
-    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json']) {
+    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json', '/assets/endet-symbol-geist-rounded.svg', '/fonts/Geist-Variable.woff2']) {
       await router.fetch(new Request(`https://endet.xyz${prefix}${suffix}?a=1`), env);
       assert.equal(observed.url, `${env.PAGES_ORIGIN}${directory}${suffix}?a=1`);
     }
