@@ -1,8 +1,10 @@
 # 리필 스테이션 설명서
 
-- 고객: https://endet.xyz/refill-user-guide/
-- 관리자: https://endet.xyz/refill-admin-guide/
-- 3.5.3 고정 설명서: https://endet.xyz/refill-admin-guide/3.5.3/
+- 서비스 진입: https://refill.endet.xyz/
+- 고객: https://refill.endet.xyz/manual/user/
+- 기기 관리자: https://refill.endet.xyz/manual/admin/
+- 3.5.3 고정 설명서: https://refill.endet.xyz/manual/admin/3.5.3/
+- POS 관리자: https://refill.endet.xyz/pos-admin
 - Pages 원본: https://refill-station-guide.pages.dev/
 
 고객 안내는 디스펜스 이용만 설명한다. 관리자 안내는 기기의 터치 화면을 기준으로
@@ -12,7 +14,11 @@
 
 ## 파일 구성
 
-- `index.html`: 고객 안내
+- `index.html`: 제품 이름과 고객·기기 관리자·POS 안내·POS 관리자 링크
+- `user-guide.html`: 고객 안내 (공개 주소 `/manual/user/`)
+- `pos/index.html`: POS 등록·사용·테스트 안내 (공개 주소 `/pos/`)
+- `pos/styles.css`: POS 안내의 인쇄·목차·표 스타일
+- `pos/images/`: 계정·매장·기기 안내 PNG 14장과 Toss 설정 JPEG 7장
 - `styles.css`: 고객 안내의 화면 중심 레이아웃과 가상 체험 스타일
 - `simulator.mjs`: 기기 연결 없는 고객 조작 체험
 - `demo.ko.vtt`: 시연 영상의 한국어 안내 자막
@@ -24,13 +30,13 @@
 - `admin/3.5.3/images/`: 해당 버전의 화면 예시 (고객 안내에서도 참조)
 - `admin/versions.json`: 제공하는 버전 목록과 최신 버전
 - `admin/versions.js`: 버전 드롭다운과 이동, 목록 오류 처리
-- `worker/`: endet.xyz의 두 설명서 경로만 Pages로 전달
+- `worker/`: allowlist 정적 파일과 refill.endet.xyz 설명서 라우터
 - `SOURCE_NOTES.md`: 작성 근거와 검증 범위
 - `scripts/capture_screens.py`: 펌웨어 원본을 바꾸지 않는 화면 캡처 도구
 
 정적 HTML·CSS, 고객 체험과 버전 선택 스크립트를 사용한다. 사이트 빌드 도구는 필요 없다.
 로고는 `assets/`의 SVG를 그대로 교체하고, 글꼴은 두 CSS의 `@font-face`와 `font-family`에서 조정한다. Geist에 없는 한글은 Apple SD Gothic Neo·Noto Sans KR·시스템 글꼴로 표시한다.
-관리자 공식 주소가 `/refill-admin-guide/` 아래에서 제공되므로 관리자용 SVG와 글꼴은 `admin/assets/`, `admin/fonts/`에도 같은 파일을 둔다.
+관리자 공식 주소가 `refill.endet.xyz/manual/admin/` 아래에서 제공되므로 관리자용 SVG와 글꼴은 `admin/assets/`, `admin/fonts/`에도 같은 파일을 둔다.
 고객 안내는 큰 체험 화면과 6개의 화면별 안내 카드로 구성한다. 직접 체험과 실제 HMI
 미리보기로 만든 시연 영상을 전환할 수 있다.
 
@@ -54,7 +60,8 @@
 
 ```sh
 python3 -m http.server 8767 --bind 127.0.0.1
-# 고객: http://127.0.0.1:8767/
+# 서비스 진입: http://127.0.0.1:8767/
+# 고객 원본 파일: http://127.0.0.1:8767/user-guide.html
 # 관리자: http://127.0.0.1:8767/admin/3.5.3/
 node scripts/check.mjs
 ```
@@ -96,7 +103,7 @@ node scripts/check.mjs
 
 ## 배포
 
-Cloudflare Pages 설정은 기존대로 유지한다.
+Cloudflare Pages 설정과 GitHub 원본은 그대로 유지한다.
 
 - GitHub: `pyupwi/refill-station-guide`
 - Production branch: `main`
@@ -104,17 +111,25 @@ Cloudflare Pages 설정은 기존대로 유지한다.
 - Build command: 없음
 - Build output directory: `/`
 
-`main` 변경 시 Pages가 자동 배포한다. `_redirects`는 Pages 원본에서도 공식 경로 형태로
-접근할 수 있게 한다. 모르는 경로는 `404.html`을 사용한다.
+`main` 변경 시 Pages 원본이 자동 배포된다. `_redirects`와 `_headers`는 Pages 원본과
+Worker assets 양쪽에서 같은 정적 경로 규칙과 헤더를 제공한다. 모르는 경로는 `404.html`을 사용한다.
 
-기존 `refill-user-guide-router` Worker는 다음 두 경로에만 연결한다.
+Worker는 `refill.endet.xyz/*` 한 경로로 연결된다. `/manual/*`만 Worker가 먼저 처리한다.
+루트·정적 자산은 네이티브 assets가 제공하고, `/api/*`와 `/pos-admin*`은 더 구체적인 POS Worker
+경로가 처리한다. 이 안내 Worker는 다음 문서 경로를 로컬 `ASSETS` 바인딩으로 전달한다.
 
-- `endet.xyz/refill-user-guide*` → Pages `/`
-- `endet.xyz/refill-admin-guide*` → Pages `/admin/`
+- `/manual/user*` → `/user-guide` 및 루트 상대 자산
+- `/manual/admin*` → `/admin/` 및 관리자 자산
+- `/pos/*` → POS 안내 native assets
 
-끝의 슬래시가 없으면 308로 슬래시를 붙인다. 관리자 기본 주소는 현재 버전으로
-이동하며, 저장된 버전 주소는 유지한다. Pages의 경로 정규화도 공식 주소 안에서
-처리한다. 다른 endet.xyz 경로는 이 Worker의 대상이 아니다.
+고객 기본 문서는 assets clean URL `/user-guide`다. 슬래시가 없는 설명서 주소는 308로
+정규화하며, 관리자 기본 주소는 현재 버전으로 이동한다. Range 응답과 canonical 경로의 공개
+주소 변환은 Worker에서 처리한다.
+
+`npm run prepare-assets`는 명시된 공개 파일 67개만 `worker/.assets/`에 복사한다.
+이 중 65개는 콘텐츠 파일이고 `_headers`·`_redirects` 두 개는 assets 런타임 메타데이터다.
+README, 소스 노트, 스크립트와 패키지 파일은 배포 디렉터리에 포함되지 않는다.
+`npm run dev`와 `npm run deploy`는 준비 단계를 자동으로 실행한다.
 
 라우터 코드나 경로 설정을 바꾼 경우에는 Pages 자동 배포 외에 Worker 배포가 필요하다.
 
@@ -122,12 +137,13 @@ Cloudflare Pages 설정은 기존대로 유지한다.
 cd worker
 npm ci
 npm run check
-npx wrangler deploy --dry-run
+npm run dev
 npm run deploy
 ```
 
-사이트 내용만 갱신할 때는 Worker를 다시 배포할 필요가 없다. Cloudflare 로그인이
-만료됐으면 기기나 네트워크를 변경하지 말고 해당 계정의 로그인만 갱신한다.
+`main` 변경 시 Pages 원본은 자동 배포되지만, 사용자 도메인의 Worker와 그 assets는
+`npm run deploy`로 별도 배포한다. 정적 파일을 바꿀 때도 allowlist assets가 Worker에 포함되도록
+이 명령으로 배포한다. Cloudflare 로그인이나 배포는 이 로컬 확인 작업에서 수행하지 않는다.
 
-Pages의 전체 영상 응답을 보완하기 위해 공식 주소의 Worker는 2 MiB 이하 MP4의 단일
-Range 요청을 206으로 반환한다. 2 MiB를 넘는 영상은 범위 응답을 지원하는 저장소를 사용한다.
+공식 주소의 Worker는 2 MiB 이하 MP4의 단일 Range 요청을 206으로 반환한다. 2 MiB를 넘는
+영상은 범위 응답을 지원하는 저장소를 사용한다.

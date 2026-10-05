@@ -12,7 +12,7 @@ const manifest = JSON.parse(read('admin/versions.json'));
 assert(manifest.versions.includes(manifest.latest));
 assert.equal(new Set(manifest.versions).size, manifest.versions.length);
 assert(read('admin/index.html').includes(`url=${manifest.latest}/`));
-const pages = ['index.html', ...manifest.versions.map(v => `admin/${v}/index.html`)];
+const pages = ['user-guide.html', ...manifest.versions.map(v => `admin/${v}/index.html`)];
 let screenCount = 0;
 for (const path of pages) {
   const html = read(path);
@@ -47,12 +47,80 @@ for (const version of manifest.versions) {
   assert(/^\d+\.\d+\.\d+$/.test(version));
   assert(read(`admin/${version}/index.html`).includes(`data-version="${version}"`));
 }
-assert(read('index.html').includes('리필재개'));
-assert(read('index.html').includes('src="simulator.mjs"'));
-assert(read('index.html').includes('controls muted loop playsinline preload="none"'));
+for (const url of [
+  'https://refill.endet.xyz/manual/user/',
+  'https://refill.endet.xyz/manual/admin/',
+  'https://refill.endet.xyz/pos/',
+  'https://refill.endet.xyz/pos-admin',
+]) assert(read('index.html').includes(url), `Landing link missing: ${url}`);
+assert.equal((read('index.html').match(/<a\b/g) || []).length, 4);
+const posGuide = read('pos/index.html');
+assert(posGuide.includes('<link rel="canonical" href="https://refill.endet.xyz/pos/">'));
+assert(posGuide.includes('href="/pos/styles.css"'));
+const posIds = [...posGuide.matchAll(/\bid="([^"]+)"/g)].map(([, id]) => id);
+assert.equal(new Set(posIds).size, posIds.length, 'Duplicate POS guide anchors');
+for (const id of ['start', 'stores-devices', 'station-register', 'device-pos', 'products', 'manual-test', 'multi-devices', 'multi-stores', 'toss-test', 'daily', 'cancel', 'troubleshooting', 'security']) {
+  assert(posIds.includes(id), `Missing POS guide section ${id}`);
+}
+for (const [, fragment] of posGuide.matchAll(/href="#([^"]+)"/g)) {
+  assert(posIds.includes(fragment), `Missing POS guide anchor ${fragment}`);
+}
+assert(posGuide.includes('aria-label="POS 안내 목차"'));
+const posImageIds = ['login', 'account-management', 'account-settings', 'store-form', 'station-form', 'connection-info', 'device-pos-web', 'product-form', 'test-order', 'test-pending', 'device-pos-ready', 'test-received', 'stations-two', 'store-switch'];
+const posImages = [...posGuide.matchAll(/<img\b[^>]+src="\/pos\/images\/([^"]+\.png)"[^>]*>/g)];
+assert.equal(posImages.length, posImageIds.length, 'POS guide screenshot count');
+for (const id of posImageIds) {
+  const path = `pos/images/${id}.png`;
+  assert(existsSync(resolve(root, path)), `Missing POS screenshot: ${path}`);
+  const tag = posImages.find(([, src]) => src === `${id}.png`)?.[0];
+  assert(tag && /loading="lazy"/.test(tag), `POS screenshot must load lazily: ${id}`);
+  const png = readFileSync(resolve(root, path));
+  assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', path);
+  assert.equal(Number(/width="(\d+)"/.exec(tag)?.[1]), png.readUInt32BE(16), `Wrong width: ${path}`);
+  assert.equal(Number(/height="(\d+)"/.exec(tag)?.[1]), png.readUInt32BE(20), `Wrong height: ${path}`);
+  const imageAt = posGuide.indexOf(tag);
+  const figureStart = posGuide.lastIndexOf('<figure', imageAt);
+  const figureEnd = posGuide.indexOf('</figure>', imageAt) + '</figure>'.length;
+  const figure = posGuide.slice(figureStart, figureEnd);
+  assert(figure.includes(`<a href="/pos/images/${id}.png" target="_blank" rel="noopener">`), `Full-size POS screenshot link missing: ${id}`);
+  assert(/<figcaption>[\s\S]*?\S[\s\S]*?<\/figcaption>/.test(figure), `POS screenshot caption missing: ${id}`);
+}
+const tossScreenshots = [
+  ['toss-merchant-list', 962, 285], ['toss-api-app', 722, 240],
+  ['toss-pos-services', 2008, 1504], ['toss-pos-service-code', 2008, 1504],
+  ['toss-api-auth', 516, 220], ['toss-webhook', 722, 145], ['toss-test-apps', 700, 168],
+];
+const tossImages = [...posGuide.matchAll(/<img\b[^>]+src="\/pos\/images\/([^"]+\.jpg)"[^>]*>/g)];
+assert.equal(tossImages.length, tossScreenshots.length, 'Toss guide screenshot count');
+for (const [id, width, height] of tossScreenshots) {
+  const path = `pos/images/${id}.jpg`;
+  assert(existsSync(resolve(root, path)), `Missing Toss screenshot: ${path}`);
+  const tag = tossImages.find(([, src]) => src === `${id}.jpg`)?.[0];
+  assert(tag && /loading="lazy"/.test(tag) && /alt="[^"]+"/.test(tag), `Toss screenshot needs alt and lazy loading: ${id}`);
+  assert.equal(readFileSync(resolve(root, path)).subarray(0, 2).toString('hex'), 'ffd8', path);
+  assert.equal(Number(/width="(\d+)"/.exec(tag)?.[1]), width, `Wrong width: ${path}`);
+  assert.equal(Number(/height="(\d+)"/.exec(tag)?.[1]), height, `Wrong height: ${path}`);
+  const imageAt = posGuide.indexOf(tag);
+  const figureStart = posGuide.lastIndexOf('<figure', imageAt);
+  const figureEnd = posGuide.indexOf('</figure>', imageAt) + '</figure>'.length;
+  const figure = posGuide.slice(figureStart, figureEnd);
+  assert(figure.includes(`<a href="/pos/images/${id}.jpg" target="_blank" rel="noopener">`), `Full-size Toss screenshot link missing: ${id}`);
+  assert(/<figcaption>[\s\S]*?\S[\s\S]*?<\/figcaption>/.test(figure), `Toss screenshot caption missing: ${id}`);
+}
+for (const [, asset] of posGuide.matchAll(/(?:href|src)="(\/[^"#]+)"/g)) {
+  assert(existsSync(resolve(root, asset.slice(1))), `Missing POS guide asset: ${asset}`);
+}
+const posCss = read('pos/styles.css');
+const posFont = /url\("(\/[^\"]+\.woff2)"\)/.exec(posCss)?.[1];
+assert(posFont && existsSync(resolve(root, posFont.slice(1))), `Missing POS guide font: ${posFont}`);
+assert(posGuide.includes('src="/assets/aeonik-wordmark-brand-700.svg"'));
+assert(read('user-guide.html').includes('리필재개'));
+assert(read('user-guide.html').includes('src="simulator.mjs"'));
+assert(read('_redirects').includes('/manual/user/ /user-guide 200'));
+assert(read('user-guide.html').includes('controls muted loop playsinline preload="none"'));
 assert(read('styles.css').includes('prefers-reduced-motion'));
 for (const [, id] of read('simulator.mjs').matchAll(/get\('([^']+)'\)/g)) {
-  assert(read('index.html').includes(`id="${id}"`), `Simulator element missing: ${id}`);
+  assert(read('user-guide.html').includes(`id="${id}"`), `Simulator element missing: ${id}`);
 }
 const movie = readFileSync(resolve(root, 'admin/3.5.3/images/dispense-demo.mp4'));
 const atoms = [];
@@ -66,8 +134,9 @@ assert.equal(atoms[0], 'ftyp');
 assert(atoms.includes('moov') && atoms.indexOf('moov') < atoms.indexOf('mdat'), 'Video must support progressive playback');
 assert(movie.length <= 2 * 1024 * 1024, 'Use native range storage for larger videos');
 
-const env = { PAGES_ORIGIN: 'https://refill-station-guide.pages.dev' };
-const adminPage = new URL('https://endet.xyz/refill-admin-guide/3.5.3/');
+let observed;
+const env = { ASSETS: { fetch: async request => { observed = request; return new Response('upstream'); } } };
+const adminPage = new URL('https://refill.endet.xyz/manual/admin/3.5.3/');
 const adminCss = new URL('../styles.css', adminPage);
 const brandFiles = [
   ...[...read('admin/3.5.3/index.html').matchAll(/(?:href|src)="([^"]+\.svg)"/g)].map(([, path]) => [path, adminPage]),
@@ -75,36 +144,34 @@ const brandFiles = [
 ];
 for (const [path, base] of brandFiles) {
   const publicPath = new URL(path, base).pathname;
-  assert(publicPath.startsWith('/refill-admin-guide/'), `Asset escaped admin route: ${publicPath}`);
-  const file = resolve(root, 'admin' + publicPath.slice('/refill-admin-guide'.length));
+  assert(publicPath.startsWith('/manual/admin/'), `Asset escaped admin route: ${publicPath}`);
+  const file = resolve(root, 'admin' + publicPath.slice('/manual/admin'.length));
   assert(existsSync(file), `Missing public admin asset: ${publicPath}`);
   const bytes = readFileSync(file);
   assert(bytes.subarray(0, 4).toString() === (path.endsWith('.svg') ? '<svg' : 'wOF2'), `Wrong asset type: ${publicPath}`);
 }
-const realFetch = globalThis.fetch;
-let observed;
-globalThis.fetch = async request => { observed = request; return new Response('upstream'); };
 try {
-  for (const [prefix, directory] of [['/refill-user-guide', ''], ['/refill-admin-guide', '/admin']]) {
-    const redirect = await router.fetch(new Request(`https://endet.xyz${prefix}?from=qr`), env);
+  for (const [prefix, directory] of [['/manual/user', ''], ['/manual/admin', '/admin']]) {
+    const redirect = await router.fetch(new Request(`https://refill.endet.xyz${prefix}?from=qr`), env);
     assert.equal(redirect.status, 308);
-    assert.equal(redirect.headers.get('Location'), `https://endet.xyz${prefix}/?from=qr`);
+    assert.equal(redirect.headers.get('Location'), `https://refill.endet.xyz${prefix}/?from=qr`);
     for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2']) {
-      await router.fetch(new Request(`https://endet.xyz${prefix}${suffix}?a=1`), env);
-      assert.equal(observed.url, `${env.PAGES_ORIGIN}${directory}${suffix}?a=1`);
+      await router.fetch(new Request(`https://refill.endet.xyz${prefix}${suffix}?a=1`), env);
+      const target = prefix === '/manual/user' && suffix === '/' ? '/user-guide' : `${directory}${suffix}`;
+      assert.equal(observed.url, `https://refill.endet.xyz${target}?a=1`);
     }
-    await router.fetch(new Request(`https://endet.xyz${prefix}/`, { method: 'HEAD' }), env);
+    await router.fetch(new Request(`https://refill.endet.xyz${prefix}/`, { method: 'HEAD' }), env);
     assert.equal(observed.method, 'HEAD');
-    assert.equal((await router.fetch(new Request(`https://endet.xyz${prefix}/`, { method: 'POST' }), env)).status, 405);
+    assert.equal((await router.fetch(new Request(`https://refill.endet.xyz${prefix}/`, { method: 'POST' }), env)).status, 405);
   }
-  for (const path of ['/', '/shop/', '/refill-admin-guide-other/', '/refill-user-guide-old/']) {
-    assert.equal((await router.fetch(new Request(`https://endet.xyz${path}`), env)).status, 404);
+  for (const path of ['/', '/shop/', '/manual/admin-old/', '/manual/user-old/']) {
+    assert.equal((await router.fetch(new Request(`https://refill.endet.xyz${path}`), env)).status, 404);
   }
-  globalThis.fetch = async request => {
+  env.ASSETS.fetch = async request => {
     observed = request;
     return new Response('0123456789', { headers: { 'Content-Type': 'video/mp4', 'Content-Length': '10', ETag: '"clip"' } });
   };
-  for (const prefix of ['/refill-user-guide', '/refill-admin-guide']) {
+  for (const prefix of ['/manual/user', '/manual/admin']) {
     for (const [range, status, body, contentRange] of [
       ['bytes=0-1', 206, '01', 'bytes 0-1/10'], ['bytes=4-', 206, '456789', 'bytes 4-9/10'],
       ['bytes=-3', 206, '789', 'bytes 7-9/10'], ['bytes=7-999', 206, '789', 'bytes 7-9/10'],
@@ -112,27 +179,37 @@ try {
       ['bytes=-0', 416, '', 'bytes */10'], ['bytes=0-1,4-5', 200, '0123456789', null],
       ['invalid', 200, '0123456789', null],
     ]) {
-      const partial = await router.fetch(new Request(`https://endet.xyz${prefix}/demo.mp4`, { headers: { Range: range } }), env);
+      const partial = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/demo.mp4`, { headers: { Range: range } }), env);
       assert.equal(observed.headers.get('Range'), range);
       assert.equal(partial.status, status, range);
       assert.equal(partial.headers.get('Content-Range'), contentRange, range);
       assert.equal(await partial.text(), body, range);
     }
-    const stale = await router.fetch(new Request(`https://endet.xyz${prefix}/demo.mp4`, { headers: { Range: 'bytes=0-1', 'If-Range': '"old"' } }), env);
+    const stale = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/demo.mp4`, { headers: { Range: 'bytes=0-1', 'If-Range': '"old"' } }), env);
     assert.equal(stale.status, 200);
     assert.equal(await stale.text(), '0123456789');
   }
-  globalThis.fetch = async () => new Response(null, { status: 308, headers: { Location: '/admin/3.5.3/?q=1' } });
-  const canonical = await router.fetch(new Request('https://endet.xyz/refill-admin-guide/3.5.3'), env);
-  assert.equal(canonical.headers.get('Location'), 'https://endet.xyz/refill-admin-guide/3.5.3/?q=1');
-} finally { globalThis.fetch = realFetch; }
+  env.ASSETS.fetch = async request => {
+    observed = request;
+    return new Response('0123456789', { headers: { 'Content-Type': 'video/mp4' } });
+  };
+  const missingLength = await router.fetch(new Request('https://refill.endet.xyz/manual/user/demo.mp4', {
+    headers: { Range: 'bytes=0-1' },
+  }), env);
+  assert.equal(missingLength.status, 206);
+  assert.equal(missingLength.headers.get('Content-Range'), 'bytes 0-1/10');
+  assert.equal(await missingLength.text(), '01');
+  env.ASSETS.fetch = async () => new Response(null, { status: 308, headers: { Location: '/admin/3.5.3/?q=1' } });
+  const canonical = await router.fetch(new Request('https://refill.endet.xyz/manual/admin/3.5.3'), env);
+  assert.equal(canonical.headers.get('Location'), 'https://refill.endet.xyz/manual/admin/3.5.3/?q=1');
+} finally { env.ASSETS.fetch = async request => { observed = request; return new Response('upstream'); }; }
 
 // Test version navigation without a browser or extra packages.
 async function checkVersions(payload, fail = false) {
   const select = { value: '3.5.3', addEventListener: (_, cb) => select.change = cb,
     replaceChildren: (...children) => select.children = children };
   const status = {};
-  const location = { href: 'https://endet.xyz/refill-admin-guide/3.5.3/', hash: '#precise',
+  const location = { href: 'https://refill.endet.xyz/manual/admin/3.5.3/', hash: '#precise',
     assign: url => location.assigned = String(url) };
   const context = { URL, location, Option: class { constructor(label, value, def, selected) { Object.assign(this, {label, value, selected}); } },
     document: { body: { dataset: { version: '3.5.3' } }, querySelector: id => id === '#guide-version' ? select : status },
@@ -145,7 +222,7 @@ const valid = await checkVersions({ latest: '3.6.0', versions: ['3.6.0', '3.5.3'
 assert.equal(valid.select.children.length, 2);
 assert.equal(valid.select.children[1].selected, true);
 valid.select.value = '3.6.0'; valid.select.change();
-assert.equal(valid.location.assigned, 'https://endet.xyz/refill-admin-guide/3.6.0/#precise');
+assert.equal(valid.location.assigned, 'https://refill.endet.xyz/manual/admin/3.6.0/#precise');
 for (const [payload, fail] of [[{}, true], [{ latest: '../bad', versions: ['3.5.3', '../bad'] }, false]]) {
   const result = await checkVersions(payload, fail);
   assert(result.status.textContent.includes('현재 설명서는 계속 읽을 수 있습니다'));

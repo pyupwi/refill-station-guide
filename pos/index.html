@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="POS 등록·사용·테스트 안내">
+  <link rel="canonical" href="https://refill.endet.xyz/pos/">
+  <link rel="stylesheet" href="/pos/styles.css">
+  <title>POS 등록·사용·테스트 안내 | endet.</title>
+</head>
+<body>
+  <a class="skip-link" href="#content">본문으로 건너뛰기</a>
+  <header class="site-header">
+<a class="brand" href="https://refill.endet.xyz/" aria-label="endet. 홈">
+<img src="/assets/aeonik-wordmark-brand-700.svg" alt="endet.">
+</a>
+<nav aria-label="서비스">
+<a href="https://refill.endet.xyz/manual/user/">고객 안내</a>
+<a href="https://refill.endet.xyz/manual/admin/">기기 관리자 안내</a>
+<a href="https://refill.endet.xyz/pos-admin">POS 관리자</a>
+</nav>
+</header>
+  <main id="content">
+<header class="page-heading">
+<p class="eyebrow">POS 운영 안내</p>
+<h1>POS 등록·사용·테스트 안내</h1>
+<p class="document-status">기준일: 2026-10-06</p>
+</header>
+    <details class="mobile-toc">
+<summary>목차</summary>
+<nav aria-label="POS 안내 목차">
+<ol>
+<li>
+<a href="#start">시작하기</a>
+</li>
+<li>
+<a href="#stores-devices">매장 등록</a>
+</li>
+<li>
+<a href="#station-register">첫 번째 기기</a>
+</li>
+<li>
+<a href="#device-pos">기기 POS 연결</a>
+</li>
+<li>
+<a href="#products">상품 연결</a>
+</li>
+<li>
+<a href="#manual-test">결제 없는 연결 시험</a>
+</li>
+<li>
+<a href="#multi-devices">두 번째 기기</a>
+</li>
+<li>
+<a href="#multi-stores">매장 추가</a>
+</li>
+<li>
+<a href="#toss-test">Toss 주문 시험</a>
+</li>
+<li>
+<a href="#daily">매일 운영</a>
+</li>
+<li>
+<a href="#cancel">취소</a>
+</li>
+<li>
+<a href="#troubleshooting">문제 해결</a>
+</li>
+</ol>
+</nav>
+</details>
+    <div class="guide-layout">
+<aside class="desktop-toc">
+<nav aria-label="POS 안내 목차">
+<strong>목차</strong>
+<ol>
+<li>
+<a href="#start">시작하기</a>
+</li>
+<li>
+<a href="#stores-devices">매장 등록</a>
+</li>
+<li>
+<a href="#station-register">첫 번째 기기</a>
+</li>
+<li>
+<a href="#device-pos">기기 POS 연결</a>
+</li>
+<li>
+<a href="#products">상품 연결</a>
+</li>
+<li>
+<a href="#manual-test">결제 없는 연결 시험</a>
+</li>
+<li>
+<a href="#multi-devices">두 번째 기기</a>
+</li>
+<li>
+<a href="#multi-stores">매장 추가</a>
+</li>
+<li>
+<a href="#toss-test">Toss 주문 시험</a>
+</li>
+<li>
+<a href="#daily">매일 운영</a>
+</li>
+<li>
+<a href="#cancel">취소</a>
+</li>
+<li>
+<a href="#troubleshooting">문제 해결</a>
+</li>
+</ol>
+</nav>
+</aside>
+<article class="guide-content">
+<div class="guide-intro">
+<p>처음 설치한다면 아래 순서대로 <strong>성수점의 입구 세제 1대</strong>를 연결하고 100g 준비량을 확인하세요. 이어서 같은 매장의 두 번째 기기와 연남점을 추가합니다.</p>
+<p>중앙 관리·기기 화면의 매장·기기·상품과 연결 키는 설명용 예시입니다. Toss 화면은 개발 테스트 앱·매장의 실제 화면이며, 자신의 매장 정보와 발급받은 키를 사용하세요.</p>
+</div>
+
+
+<section id="start">
+<h2>1. 중앙 관리에 로그인하기</h2>
+<p><a href="https://refill.endet.xyz/pos-admin/">중앙 POS 관리 열기</a></p>
+<ol>
+<li><strong>계정 로그인</strong>에 받은 <strong>로그인 ID</strong>와 <strong>비밀번호</strong>를 입력하고 <strong>로그인</strong>을 누릅니다.</li>
+<li><strong>매장 관리자</strong>는 배정된 매장으로 바로 진입합니다. 화면 위의 매장 이름을 확인합니다.</li>
+<li><strong>전체 관리자</strong>는 <strong>현재 매장</strong>에서 작업할 매장을 선택합니다.</li>
+</ol>
+<p>중앙 관리 계정은 전체 관리자에게 받습니다. 장치 등록 후 발급하는 연결 키와 기기 관리자 비밀번호는 각각 별도 정보입니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/login.png" target="_blank" rel="noopener">
+<img src="/pos/images/login.png" alt="계정 로그인 · 받은 로그인 ID와 비밀번호를 입력합니다." loading="lazy" width="1440" height="1000">
+</a>
+<figcaption>계정 로그인 · 받은 로그인 ID와 비밀번호를 입력합니다.</figcaption>
+</figure>
+<h3>전체 관리자와 매장 관리자</h3>
+<p>전체 관리자는 매장 등록·수정·삭제, Toss 가맹점 연결, 계정 발급과 배정을 관리합니다. 매장 관리자는 배정된 한 매장의 모든 리필 장치·연결 키·상품 연결·테스트 주문·전달 대기를 관리합니다.</p>
+<h3>매장 계정 발급하기</h3>
+<ol>
+<li>전체 관리자 계정으로 로그인하고 <strong>계정 관리 → 계정 만들기</strong>를 누릅니다.</li>
+<li><strong>로그인 ID</strong>와 <strong>초기 비밀번호</strong>를 입력합니다. ID는 영문 소문자·숫자·점·밑줄·@·하이픈으로 3–64자, 비밀번호는 12–256자로 설정합니다.</li>
+<li><strong>권한: 매장 관리자</strong>와 해당 <strong>배정 매장</strong>을 선택하고 <strong>계정 만들기</strong>를 누릅니다.</li>
+<li>계정 목록에서 ID·배정 매장·<strong>사용 중</strong>을 확인한 뒤 매장 담당자에게 로그인 정보를 전달합니다.</li>
+</ol>
+<p>전체 관리자 계정이 필요하면 권한을 <strong>전체 관리자</strong>로 선택합니다. 같은 매장의 모든 기기는 해당 매장 계정으로 관리하고 다른 매장은 별도 계정을 발급합니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/account-management.png" target="_blank" rel="noopener">
+<img src="/pos/images/account-management.png" alt="전체 매장 계정 관리 · 계정을 만들고 배정 매장과 사용 여부를 확인합니다." loading="lazy" width="1440" height="1000">
+</a>
+<figcaption>전체 매장 계정 관리 · 계정을 만들고 배정 매장과 사용 여부를 확인합니다.</figcaption>
+</figure>
+<h3>배정 변경·비밀번호 초기화·비활성화</h3>
+<ol>
+<li><strong>계정 관리</strong>에서 해당 계정의 <strong>수정</strong>을 누릅니다.</li>
+<li>다른 매장을 배정하려면 <strong>배정 매장</strong>을 바꿉니다. 권한을 바꾸려면 <strong>권한</strong>에서 전체 관리자 또는 매장 관리자를 선택합니다.</li>
+<li>비밀번호를 초기화하려면 <strong>새 비밀번호</strong>를 입력합니다. 기존 비밀번호를 유지할 때는 비워 둡니다.</li>
+<li>계정을 중지하려면 <strong>이 계정 사용</strong>을 해제합니다. 다시 사용할 때는 선택합니다.</li>
+<li><strong>변경 저장</strong>을 누르고 목록에서 변경한 매장과 사용 여부를 확인합니다.</li>
+</ol>
+<p>저장하면 해당 계정은 다시 로그인해야 합니다. 기기 연결은 유지됩니다. 매장 담당자에게 바뀐 배정이나 새 비밀번호를 알려 주세요.</p>
+<figure class="guide-figure">
+<a href="/pos/images/account-settings.png" target="_blank" rel="noopener">
+<img src="/pos/images/account-settings.png" alt="계정 수정 · 배정 매장, 새 비밀번호와 이 계정 사용을 설정합니다." loading="lazy" width="1440" height="1000">
+</a>
+<figcaption>계정 수정 · 배정 매장, 새 비밀번호와 이 계정 사용을 설정합니다.</figcaption>
+</figure>
+<h3>내 비밀번호 변경하기</h3>
+<ol>
+<li>본인 계정으로 로그인하고 <strong>비밀번호 변경</strong>을 누릅니다.</li>
+<li><strong>현재 비밀번호</strong>와 12–256자의 <strong>새 비밀번호</strong>를 입력합니다. 앞뒤 공백도 비밀번호에 포함됩니다.</li>
+<li><strong>비밀번호 변경</strong>을 누릅니다. 로그인 화면으로 돌아오면 본인 ID와 새 비밀번호로 로그인합니다.</li>
+</ol>
+<p>변경하면 같은 계정으로 로그인한 모든 기기의 로그인이 해제됩니다. 현재 비밀번호를 잊었다면 전체 관리자에게 초기화를 요청하세요.</p>
+</section>
+<section id="stores-devices">
+<h2>2. 성수점 등록하기</h2>
+<p>매장 등록과 Toss 가맹점 연결은 전체 관리자가 진행합니다. 매장 계정을 받았다면 배정된 매장 이름을 확인한 뒤 <a href="#station-register">첫 번째 기기 등록</a>으로 이동합니다.</p>
+<ol>
+<li>왼쪽 <strong>매장 관리</strong>를 누르고 <strong>새 매장 등록</strong>을 엽니다. 첫 매장인 경우 <strong>매장 등록</strong> 버튼으로도 시작할 수 있습니다.</li>
+<li>아래처럼 입력합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>입력칸</th>
+<th>이번 예시에서 입력할 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>매장 이름</td>
+<td>
+<code>성수점</code>
+</td>
+</tr>
+<tr>
+<td>토스 가맹점 ID (MerchantId, 선택)</td>
+<td>비워 둡니다. Toss 연결 단계에서 입력합니다.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ol start="3">
+<li>
+<strong>매장 등록</strong>을 누릅니다.</li>
+<li>왼쪽 <strong>현재 매장</strong>에 <code>성수점</code>이 선택되고 상단에도 <code>성수점</code>이 표시되는지 확인합니다.</li>
+</ol>
+<p>이미 등록된 매장은 <strong>현재 매장</strong>에서 선택하면 됩니다. 이름이나 Toss 가맹점 ID를 바꾸려면 <strong>매장 관리 → 수정 → 변경 저장</strong>을 사용합니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/store-form.png" target="_blank" rel="noopener">
+<img src="/pos/images/store-form.png" alt="화면 2 · 매장 이름에 성수점을 입력하고 매장 등록을 누릅니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 2 · 매장 이름에 성수점을 입력하고 매장 등록을 누릅니다.</figcaption>
+</figure>
+</section>
+<section id="station-register">
+<h2>3. 첫 번째 기기 등록하기</h2>
+<h3>관리 목록에 기기 추가</h3>
+<ol>
+<li>
+<strong>현재 매장</strong>이 <code>성수점</code>인지 확인합니다.</li>
+<li>
+<strong>리필 장치 → 장치 등록</strong>을 엽니다.</li>
+<li>다음 값을 입력하고 <strong>장치 등록</strong>을 누릅니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>입력칸</th>
+<th>입력 예시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>장치 이름</td>
+<td>
+<code>입구 세제</code>
+</td>
+</tr>
+<tr>
+<td>표시 단위</td>
+<td>
+<code>g · 무게</code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>장치 이름은 관리자가 알아보기 쉽게 정하는 이름입니다. 설치 위치나 제품명을 붙이면 여러 기기를 구분하기 쉽습니다. mL로 운영하는 기기는 표시 단위를 <code>mL · 부피</code>로 선택하고 기기의 표시 단위도 맞춥니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/station-form.png" target="_blank" rel="noopener">
+<img src="/pos/images/station-form.png" alt="화면 3 · 성수점의 입구 세제를 g 단위로 등록합니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 3 · 성수점의 입구 세제를 g 단위로 등록합니다.</figcaption>
+</figure>
+<h3>주소와 연결 키 확보</h3>
+<p>등록하면 <strong>장치 연결 정보</strong>가 열립니다.</p>
+<ol>
+<li>
+<strong>주소 복사</strong>를 눌러 서버 주소를 복사합니다.</li>
+<li>
+<strong>키 복사</strong>를 눌러 입구 세제의 연결 키를 복사합니다.</li>
+<li>연결 키를 <code>성수점 / 입구 세제</code>라는 이름으로 보관합니다.</li>
+<li>
+<strong>확인했어요</strong>로 창을 닫고 <strong>리필 장치</strong> 목록에 <code>입구 세제</code>가 보이는지 확인합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>연결 정보</th>
+<th>사용하는 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>서버 주소</td>
+<td>
+<code>https://refill.endet.xyz/api/device/sync</code>
+</td>
+</tr>
+<tr>
+<td>연결 키</td>
+<td>이번에 입구 세제를 등록하면서 발급받은 키</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+<strong>서버 주소는 모든 기기가 공통으로 사용하고, 연결 키는 기기마다 따로 발급합니다.</strong> 키는 발급 창에서 한 번 표시되므로 보관 후 닫습니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/connection-info.png" target="_blank" rel="noopener">
+<img src="/pos/images/connection-info.png" alt="화면 4 · 공통 서버 주소와 이 기기의 연결 키를 복사합니다. 화면에는 예시 키가 표시됩니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 4 · 공통 서버 주소와 이 기기의 연결 키를 복사합니다. 화면에는 예시 키가 표시됩니다.</figcaption>
+</figure>
+</section>
+<section id="device-pos">
+<h2>4. 실제 입구 세제 기기에 연결하기</h2>
+<p>이제 성수점에 설치한 <strong>입구 세제 기기</strong>에서 설정합니다. 기기의 인터넷 연결과 기존 펌프 보정이 준비된 상태에서 진행하세요.</p>
+<h3>기기 Web으로 설정</h3>
+<ol>
+<li>해당 기기의 접속 주소를 열고 기기 관리자 비밀번호로 로그인합니다. 기기 주소는 장치의 접속 안내에서 확인합니다.</li>
+<li>
+<strong>기기 설정 → POS 연동</strong>을 엽니다.</li>
+<li>다음 값을 입력합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>입력칸</th>
+<th>입력할 값</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>서버 주소 (HTTPS)</td>
+<td>
+<code>https://refill.endet.xyz/api/device/sync</code>
+</td>
+</tr>
+<tr>
+<td>기기 연결 토큰</td>
+<td>앞 단계에서 발급받은 <code>성수점 / 입구 세제</code> 키</td>
+</tr>
+<tr>
+<td>POS 모드 사용</td>
+<td>체크</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ol start="4">
+<li>
+<strong>POS 설정 저장</strong>을 누릅니다.</li>
+<li>저장 후 <strong>POS 모드 사용</strong>이 선택돼 있고 서버 주소가 유지되는지 확인합니다. 연결 토큰 입력칸은 보안을 위해 비워 표시되며, 입력칸 아래 <strong>연결 토큰 등록됨.</strong> 안내를 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/device-pos-web.png" target="_blank" rel="noopener">
+<img src="/pos/images/device-pos-web.png" alt="화면 5 · 입구 세제 기기에 서버 주소·해당 기기 키를 입력하고 POS 모드 사용을 저장합니다." loading="lazy" width="1265" height="712">
+</a>
+<figcaption>화면 5 · 입구 세제 기기에 서버 주소·해당 기기 키를 입력하고 POS 모드 사용을 저장합니다.</figcaption>
+</figure>
+<h3>Display 화면으로 설정</h3>
+<p>Display 기기는 <strong>관리 화면 → 무선 통신 → POS 연결</strong>에서도 설정할 수 있습니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>입력·조작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTPS 서버 주소</td>
+<td>위 공통 서버 주소 입력</td>
+</tr>
+<tr>
+<td>연결 키</td>
+<td>입구 세제의 키 입력</td>
+</tr>
+<tr>
+<td>POS 사용</td>
+<td>켜기</td>
+</tr>
+<tr>
+<td>저장</td>
+<td>누르기</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>저장 후 POS 대기 화면에 <strong>POS에서 상품을 선택하고 결제해 주세요</strong>가 보입니다. 실제 연결은 다음의 100g 수신 시험으로 확인합니다. 이미 등록한 키를 유지할 때는 키 입력칸을 비워 저장할 수 있습니다.</p>
+</section>
+<section id="products">
+<h2>5. 세제 100g 상품 연결하기</h2>
+<p>중앙 관리로 돌아와 이 상품을 주문하면 입구 세제에 100g를 준비하도록 연결합니다.</p>
+<ol>
+<li><strong>현재 매장</strong>에서 <code>성수점</code>을 선택합니다.</li>
+<li><strong>상품 연결 → 상품 연결</strong>을 엽니다.</li>
+<li>다음처럼 입력합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>입력칸</th>
+<th>입력 예시</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>표시 이름</td>
+<td><code>세제 100g</code></td>
+</tr>
+<tr>
+<td>연결 기준</td>
+<td><code>상품명</code></td>
+</tr>
+<tr>
+<td>상품명</td>
+<td>POS에 표시된 <code>리필 테스트 100g</code></td>
+</tr>
+<tr>
+<td>옵션명 (선택)</td>
+<td>비워 둡니다.</td>
+</tr>
+<tr>
+<td>리필 장치</td>
+<td><code>입구 세제 · g</code></td>
+</tr>
+<tr>
+<td>1개당 리필 용량</td>
+<td><code>100</code></td>
+</tr>
+<tr>
+<td>이 상품 연결 사용</td>
+<td>체크</td>
+</tr>
+</tbody></table>
+</div>
+<ol start="4">
+<li><strong>상품 연결</strong>을 누릅니다.</li>
+<li>목록에서 <code>세제 100g</code>의 연결 값이 <strong>상품명: 리필 테스트 100g</strong>, 기기가 <code>입구 세제</code>, 용량이 <code>100 g</code>, 사용이 <strong>사용 중</strong>인지 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/product-form.png" target="_blank" rel="noopener">
+<img src="/pos/images/product-form.png" alt="화면 6 · 상품명 기준으로 리필 테스트 100g을 입구 세제 100g에 연결합니다." loading="lazy" width="1280" height="900">
+</a>
+<figcaption>화면 6 · 상품명 기준으로 리필 테스트 100g을 입구 세제 100g에 연결합니다.</figcaption>
+</figure>
+
+<p>일반 POS 상품은 <strong>연결 기준: 상품명</strong>을 선택하고 POS에 보이는 상품명을 띄어쓰기까지 그대로 입력합니다. 예를 들어 POS 상품명이 <code>리필 테스트 100g</code>이면 <strong>상품명</strong>에 <code>리필 테스트 100g</code>, <strong>1개당 리필 용량</strong>에 <code>100</code>을 입력합니다. 옵션이 있으면 <strong>옵션명 (선택)</strong>에 선택할 옵션명을 쉼표로 구분해 입력합니다.</p>
+<p>상품 코드가 있는 상품은 <strong>연결 기준: 상품 코드</strong>를 선택하고 <strong>상품 코드 / 옵션 코드 (선택)</strong>에 해당 값을 입력합니다. 이미 등록된 상품 코드 연결은 같은 기준으로 표시됩니다.</p>
+<p>같은 기기의 여러 상품은 <code>1개당 용량 × 수량</code>으로 합산합니다.</p>
+</section>
+<section id="manual-test">
+<h2>6. 100g 연결 시험하기</h2>
+<p>
+<strong>이 단계는 Toss 앱이나 결제 설정 없이 할 수 있습니다.</strong> 중앙 관리가 보낸 용량을 실제 기기가 받는지 확인합니다.</p>
+<ol>
+<li>입구 세제 기기를 대기 상태로 둡니다.</li>
+<li>중앙 관리에서 <code>성수점</code>을 선택하고 <strong>테스트 주문</strong>을 엽니다.</li>
+<li>
+<code>세제 100g</code>의 수량을 <strong>1</strong>로 입력합니다. 다른 상품이 있으면 수량을 <strong>0</strong>으로 둡니다.</li>
+<li>오른쪽 <strong>장치별 전달량</strong>에 <code>입구 세제 · 100 g</code>가 보이는지 확인합니다.</li>
+<li>
+<strong>용량 전달</strong>을 한 번 누릅니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/test-order.png" target="_blank" rel="noopener">
+<img src="/pos/images/test-order.png" alt="화면 7 · 세제 100g 수량을 1로 입력하고, 입구 세제의 전달량 100g를 확인한 뒤 용량 전달을 누릅니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 7 · 세제 100g 수량을 1로 입력하고, 입구 세제의 전달량 100g를 확인한 뒤 용량 전달을 누릅니다.</figcaption>
+</figure>
+<figure class="guide-figure">
+<a href="/pos/images/test-pending.png" target="_blank" rel="noopener">
+<img src="/pos/images/test-pending.png" alt="화면 8 · 기기가 받기 전에는 입구 세제 100g가 전달 대기에 표시됩니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 8 · 기기가 받기 전에는 입구 세제 100g가 전달 대기에 표시됩니다.</figcaption>
+</figure>
+<h3>두 곳에서 결과 확인</h3>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>확인할 화면</th>
+<th>연결 성공 시 확인할 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>입구 세제 기기의 Display</td>
+<td>
+<strong>리필을 준비해 주세요.</strong>와 준비량 <strong>100.0 g</strong>
+</td>
+</tr>
+<tr>
+<td>입구 세제 기기의 Web 리필 화면</td>
+<td><strong>결제된 리필량 100 g</strong>
+</td>
+</tr>
+<tr>
+<td>중앙 <strong>전달 대기 → 새로고침</strong>
+</td>
+<td>입구 세제의 100g 대기 행이 사라짐. 빠르게 수신하면 대기 행이 처음부터 안 보일 수 있습니다.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="guide-figure">
+<a href="/pos/images/device-pos-ready.png" target="_blank" rel="noopener">
+<img src="/pos/images/device-pos-ready.png" alt="화면 9 · 기기 Web에서 리필 준비 100g를 확인합니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 9 · 기기 Web에서 리필 준비 100g를 확인합니다.</figcaption>
+</figure>
+<p>기기가 받은 후 중앙 대기 목록에서 제거됩니다. <strong>토출 완료는 실제 기기의 완료 화면에서 확인합니다.</strong>
+</p>
+<p>연결 확인만 할 때는 기기 준비 화면의 <strong>취소 또는 준비 취소</strong>를 누릅니다. 실제 토출까지 확인할 때는 용기를 놓고 <strong>리필 시작</strong>을 누릅니다. 준비 화면은 설정된 시간 뒤 자동으로 닫히므로 전송 후 기기를 바로 확인하세요.</p>
+<figure class="guide-figure">
+<a href="/pos/images/test-received.png" target="_blank" rel="noopener">
+<img src="/pos/images/test-received.png" alt="화면 10 · 중앙 관리에서 전달 대기를 새로고침합니다. 실제 기기의 100g 준비 화면도 함께 확인하세요." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 10 · 중앙 관리에서 전달 대기를 새로고침합니다. 실제 기기의 100g 준비 화면도 함께 확인하세요.</figcaption>
+</figure>
+<p>기기에 준비량이 안 보이면 중앙 <strong>전달 대기</strong>를 새로고침합니다. 대기 행이 남아 있으면 <a href="#troubleshooting">기기 연결 확인</a>을 따릅니다. 대기 행이 비었으면 기기에서 준비 시간이 만료됐는지 먼저 확인합니다.</p>
+</section>
+<section id="multi-devices">
+<h2>7. 성수점에 두 번째 기기 추가하기</h2>
+<p>이번에는 <code>안쪽 섬유유연제</code>를 추가합니다. <strong>성수점</strong>을 선택한 상태에서 첫 기기와 같은 순서로 등록·연결·상품 시험을 반복합니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>작업</th>
+<th>입구 세제</th>
+<th>두 번째 기기: 안쪽 섬유유연제</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>장치 등록 이름</td>
+<td>입구 세제</td>
+<td><code>안쪽 섬유유연제</code></td>
+</tr>
+<tr>
+<td>표시 단위</td>
+<td>g</td>
+<td><code>g</code></td>
+</tr>
+<tr>
+<td>기기에 입력하는 서버 주소</td>
+<td>공통 서버 주소</td>
+<td>같은 공통 서버 주소</td>
+</tr>
+<tr>
+<td>기기에 입력하는 연결 키</td>
+<td>입구 세제 등록 때 발급한 키</td>
+<td>안쪽 섬유유연제 등록 때 <strong>새로 발급한 키</strong></td>
+</tr>
+<tr>
+<td>상품 표시 이름</td>
+<td>세제 100g</td>
+<td><code>섬유유연제 100g</code></td>
+</tr>
+<tr>
+<td>연결 기준</td>
+<td>상품명</td>
+<td><code>상품명</code></td>
+</tr>
+<tr>
+<td>POS 상품명</td>
+<td>리필 테스트 100g</td>
+<td><code>섬유유연제 100g</code></td>
+</tr>
+<tr>
+<td>상품의 리필 장치</td>
+<td>입구 세제</td>
+<td><code>안쪽 섬유유연제</code></td>
+</tr>
+<tr>
+<td>1개당 용량</td>
+<td>100</td>
+<td><code>100</code></td>
+</tr>
+</tbody></table>
+</div>
+<ol>
+<li><strong>리필 장치 → 장치 등록</strong>에서 <code>안쪽 섬유유연제</code>를 등록하고 이 기기의 키를 보관합니다.</li>
+<li>실제 안쪽 섬유유연제 기기의 POS 설정에 공통 주소와 <strong>새 키</strong>를 입력해 저장합니다.</li>
+<li><strong>상품 연결</strong>에서 표의 두 번째 상품을 등록합니다. 옵션은 비우고 사용을 체크합니다.</li>
+<li><strong>리필 장치</strong> 목록에 두 기기가 있고, <strong>상품 연결</strong> 목록에서 상품마다 올바른 기기가 선택됐는지 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/stations-two.png" target="_blank" rel="noopener">
+<img src="/pos/images/stations-two.png" alt="화면 11 · 성수점의 입구 세제와 안쪽 섬유유연제가 각각 등록된 목록을 확인합니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 11 · 성수점의 입구 세제와 안쪽 섬유유연제가 각각 등록된 목록을 확인합니다.</figcaption>
+</figure>
+
+<h3>기기별로 한 번씩 시험</h3>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>시험</th>
+<th>세제 100g 수량</th>
+<th>섬유유연제 100g 수량</th>
+<th>준비돼야 하는 기기</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>입구 세제만 확인</td>
+<td>1</td>
+<td>0</td>
+<td>입구 세제 100g</td>
+</tr>
+<tr>
+<td>안쪽 섬유유연제만 확인</td>
+<td>0</td>
+<td>1</td>
+<td>안쪽 섬유유연제 100g</td>
+</tr>
+<tr>
+<td>두 기기 함께 확인</td>
+<td>1</td>
+<td>1</td>
+<td>각 기기에 100g씩</td>
+</tr>
+</tbody></table>
+</div>
+<p>각 시험에서 <strong>장치별 전달량 → 용량 전달 → 실제 준비량 → 전달 대기 새로고침</strong>을 확인합니다. 준비 취소로 한 시험을 마친 뒤 다음 시험을 진행합니다.</p>
+</section>
+<section id="multi-stores">
+<h2>8. 연남점 추가하고 매장별로 관리하기</h2>
+<ol>
+<li><strong>매장 관리 → 새 매장 등록</strong>에서 이름 <code>연남점</code>으로 등록합니다.</li>
+<li><strong>현재 매장</strong>에 <code>연남점</code>이 선택됐는지 확인합니다.</li>
+<li>연남점 기기·상품을 아래처럼 등록합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>연남점 입력 예시</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>장치 이름 / 표시 단위</td>
+<td><code>입구 세제</code> / <code>g</code></td>
+</tr>
+<tr>
+<td>연결 키</td>
+<td>연남점 입구 세제를 등록하면서 발급한 새 키</td>
+</tr>
+<tr>
+<td>상품 표시 이름 / 연결 기준</td>
+<td><code>세제 100g</code> / <code>상품명</code></td>
+</tr>
+<tr>
+<td>POS 상품명</td>
+<td><code>리필 테스트 100g</code></td>
+</tr>
+<tr>
+<td>리필 장치 / 용량</td>
+<td>연남점의 <code>입구 세제</code> / <code>100</code></td>
+</tr>
+</tbody></table>
+</div>
+<ol start="4">
+<li>연남점의 실제 기기에 공통 서버 주소와 <strong>연남점에서 발급한 키</strong>를 저장합니다.</li>
+<li>연남점 <strong>테스트 주문</strong>에서 세제 100g 수량 1을 전달해 연남점 기기에 100g가 준비되는지 확인합니다.</li>
+</ol>
+<h3>매장 전환 확인</h3>
+<p>왼쪽 <strong>현재 매장</strong>을 <code>성수점</code>으로 바꾸면 성수점의 개요·기기·상품·테스트 주문·전달 대기가 함께 바뀝니다. 다시 <code>연남점</code>을 선택하면 연남점 목록이 표시됩니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>선택한 매장</th>
+<th>리필 장치 목록</th>
+<th>상품 연결 목록</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>성수점</td>
+<td>입구 세제, 안쪽 섬유유연제</td>
+<td>세제 100g, 섬유유연제 100g</td>
+</tr>
+<tr>
+<td>연남점</td>
+<td>입구 세제</td>
+<td>세제 100g</td>
+</tr>
+</tbody></table>
+</div>
+<p>저장하거나 시험하기 전에 <strong>현재 매장</strong>과 상단 매장 이름을 확인하세요. 같은 기기 이름·상품명도 매장을 바꿔 각각 관리할 수 있습니다.</p>
+<figure class="guide-figure">
+<a href="/pos/images/store-switch.png" target="_blank" rel="noopener">
+<img src="/pos/images/store-switch.png" alt="화면 12 · 현재 매장을 연남점으로 선택하고, 연남점 기기 목록이 표시되는지 확인합니다." loading="lazy" width="1280" height="720">
+</a>
+<figcaption>화면 12 · 현재 매장을 연남점으로 선택하고, 연남점 기기 목록이 표시되는지 확인합니다.</figcaption>
+</figure>
+
+</section>
+<section id="toss-test">
+<h2>9. Toss POS 연결하고 결제 주문 확인하기</h2>
+<p>100g 연결 시험을 마쳤다면 해당 매장의 Toss POS를 연결합니다. 매장에서는 <strong>매장 ID 등록 → Open API 서비스 연결 → 완료 주문 확인</strong> 순서로 진행합니다. 서비스를 처음 설치하는 서버 운영자는 아래 <strong>처음 서버를 연결하는 담당자</strong> 안내를 먼저 완료합니다.</p>
+<h3>매장 ID와 서비스 코드 확인</h3>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>필요한 값</th>
+<th>어디서 받거나 확인하나요?</th>
+<th>어디에 사용하나요?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Toss 가맹점 ID (MerchantId)</td>
+<td>실제 매장은 서비스 연동 담당자에게 받습니다. 개발 매장은 개발자센터 <strong>테스트 가맹점 관리 → 해당 매장</strong>의 <strong>가맹점 ID (MerchantId)</strong> 값을 확인합니다.</td>
+<td>중앙 <strong>매장 관리 → 해당 매장 수정 → 토스 가맹점 ID</strong></td>
+</tr>
+<tr>
+<td>Open API 서비스 코드</td>
+<td>연동 담당자 또는 개발자센터 <strong>내 애플리케이션 → API 앱</strong>의 <strong>서비스 코드</strong></td>
+<td>해당 매장의 Toss POS <strong>서비스 코드로 연결</strong></td>
+</tr>
+</tbody></table>
+</div>
+<figure class="guide-figure">
+<a href="/pos/images/toss-merchant-list.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-merchant-list.jpg" alt="Toss 화면 1 · 테스트 매장 목록의 매장 ID (MerchantId)를 확인해 중앙 매장의 토스 가맹점 ID에 입력합니다." loading="lazy" width="962" height="285">
+</a>
+<figcaption>Toss 화면 1 · 테스트 매장 목록의 매장 ID (MerchantId)를 확인해 중앙 매장의 토스 가맹점 ID에 입력합니다.</figcaption>
+</figure>
+
+
+<figure class="guide-figure">
+<a href="/pos/images/toss-api-app.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-api-app.jpg" alt="Toss 화면 2 · API 앱 상세에서 ID와 서비스 코드를 확인합니다. 서비스 코드는 해당 매장의 POS에 입력합니다." loading="lazy" width="722" height="240">
+</a>
+<figcaption>Toss 화면 2 · API 앱 상세에서 ID와 서비스 코드를 확인합니다. 서비스 코드는 해당 매장의 POS에 입력합니다.</figcaption>
+</figure>
+
+<ol>
+<li>전체 관리자가 중앙 <strong>현재 매장</strong>에서 <code>성수점</code>을 선택합니다.</li>
+<li><strong>매장 관리 → 성수점 수정 → 토스 가맹점 ID</strong>에 받은 MerchantId를 입력하고 <strong>변경 저장</strong>을 누릅니다. 수정 화면을 다시 열어 같은 값이 저장됐는지 확인합니다.</li>
+<li>성수점의 Toss POS에서 <strong>설정 → 기타설정 → 서비스 연동 → 서비스 코드로 연결</strong>을 엽니다.</li>
+<li>받은 <strong>Open API 서비스 코드</strong>를 입력해 연결하고 해당 서비스가 연결된 화면을 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/toss-pos-services.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-pos-services.jpg" alt="Toss 화면 3 · POS의 서비스 연동에서 연결된 서비스를 확인하고 서비스 코드로 연결을 엽니다." loading="lazy" width="2008" height="1504">
+</a>
+<figcaption>Toss 화면 3 · POS의 서비스 연동에서 연결된 서비스를 확인하고 서비스 코드로 연결을 엽니다.</figcaption>
+</figure>
+
+
+<figure class="guide-figure">
+<a href="/pos/images/toss-pos-service-code.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-pos-service-code.jpg" alt="Toss 화면 4 · API 앱에서 확인한 서비스 코드를 입력합니다. 사진은 입력 전 화면입니다." loading="lazy" width="2008" height="1504">
+</a>
+<figcaption>Toss 화면 4 · API 앱에서 확인한 서비스 코드를 입력합니다. 사진은 입력 전 화면입니다.</figcaption>
+</figure>
+
+
+
+<p>MerchantId는 매장별 API 식별자입니다. POS 로그인에 사용하는 <strong>매장고유번호</strong>는 아래 개발 매장 로그인 단계에서 사용합니다.</p>
+<p><a href="https://docs.tossplace.com/guide/pos-integration/open-api/service-install.html">공식 Open API 서비스 설치</a></p>
+<h3>완료 주문과 준비량 확인</h3>
+<p>중앙 <strong>상품 연결</strong>에서 POS의 리필 상품을 연결합니다. 일반 상품은 <strong>연결 기준: 상품명</strong>과 POS에 표시된 <strong>상품명</strong>을 입력합니다. 예: <code>리필 테스트 100g</code> → <code>입구 세제</code> → 1개당 <code>100</code>. <strong>상품 연결</strong>을 누른 뒤 목록의 상품명·기기·용량을 확인합니다. 상품 코드가 있는 상품은 <strong>연결 기준: 상품 코드</strong>를 선택합니다.</p>
+<ol>
+<li>연결된 POS에서 등록한 리필 상품을 주문하고 결제를 완료합니다.</li>
+<li>해당 매장의 실제 기기에 <code>상품 용량 × 수량</code>이 준비되는지 확인합니다.</li>
+<li>중앙 <strong>전달 대기 → 새로고침</strong>으로 수신을 확인합니다.</li>
+<li>용기를 놓고 기기에서 <strong>리필 시작</strong>을 누릅니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>연결된 상품 예시</th>
+<th>주문 수량</th>
+<th>기기 준비량</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>같은 입구 세제의 100g 상품</td>
+<td>10</td>
+<td>1,000g</td>
+</tr>
+<tr>
+<td>같은 입구 세제의 500g 상품</td>
+<td>2</td>
+<td>1,000g</td>
+</tr>
+<tr>
+<td>위 두 상품을 한 주문에 함께</td>
+<td>10 + 2</td>
+<td>2,000g</td>
+</tr>
+<tr>
+<td>입구 세제 100g + 안쪽 섬유유연제 100g</td>
+<td>각각 1</td>
+<td>각 기기에 100g씩</td>
+</tr>
+</tbody></table>
+</div>
+<p>중앙 <strong>토스 서버 설정 있음</strong>은 아래 서버 설정 네 값의 등록 여부를 나타냅니다. 실제 완료 주문의 준비량까지 확인하면 매장 연동 점검을 마칠 수 있습니다. 준비가 안 되면 <a href="#troubleshooting">Toss 연결 문제</a>를 확인하세요.</p>
+<details>
+<summary>처음 서버를 연결하는 담당자: API 앱·인증 키·웹훅 설정</summary>
+
+<h3>API 앱 만들고 인증 정보 받기</h3>
+<ol>
+<li><a href="https://developers.tossplace.com/">Toss 개발자센터</a>에 로그인하고 <strong>내 애플리케이션 → 생성하기</strong>를 엽니다. 기존 연동 API 앱을 사용하는 경우 해당 앱을 엽니다.</li>
+<li>앱을 새로 만들 때 <strong>타입 API</strong>, 서비스 이름, 앱 ID, 회사명을 입력해 생성합니다. 앱 ID는 담당자가 정한 고유 문자열입니다. 저장 후 상세 화면의 <strong>ID</strong>와 <strong>서비스 코드</strong>를 확인합니다.</li>
+<li>API 앱의 <strong>인증 정보 → 생성</strong>에서 알아보기 쉬운 별칭을 입력하고 생성합니다.</li>
+<li>표시된 <strong>Access Key</strong>와 <strong>Access Secret</strong>을 서버 비밀값 저장소에 보관합니다. Access Secret은 생성할 때 한 번 확인할 수 있습니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/toss-api-auth.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-api-auth.jpg" alt="Toss 화면 5 · API 앱 인증 정보의 생성 버튼에서 키를 발급합니다. 사진은 발급 전 화면입니다." loading="lazy" width="516" height="220">
+</a>
+<figcaption>Toss 화면 5 · API 앱 인증 정보의 생성 버튼에서 키를 발급합니다. 사진은 발급 전 화면입니다.</figcaption>
+</figure>
+
+<p><a href="https://docs.tossplace.com/guide/pos-integration/open-api/develop-tutorial.html">공식 API 앱·인증 정보 안내</a></p>
+<h3>웹훅 등록하기</h3>
+<ol>
+<li>같은 API 앱의 <strong>웹훅 → 생성</strong>을 엽니다.</li>
+<li>다음 값을 입력해 생성합니다.</li>
+</ol>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>입력칸</th>
+<th>입력할 값</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Payload URL</td>
+<td><code>https://refill.endet.xyz/api/toss/webhook</code></td>
+</tr>
+<tr>
+<td>Event trigger</td>
+<td><code>order.*.*.v1</code></td>
+</tr>
+</tbody></table>
+</div>
+<ol start="3">
+<li>발급된 웹훅 <strong>Secret Key</strong>를 서버 비밀값 저장소에 보관합니다.</li>
+<li>저장된 행에서 Payload URL·Event trigger가 입력값과 같고 <strong>활성</strong>이 켜져 있는지 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/toss-webhook.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-webhook.jpg" alt="Toss 화면 6 · 저장된 웹훅의 Payload URL, Event trigger, 활성 상태를 확인합니다. Secret Key는 가려져 있습니다." loading="lazy" width="722" height="145">
+</a>
+<figcaption>Toss 화면 6 · 저장된 웹훅의 Payload URL, Event trigger, 활성 상태를 확인합니다. Secret Key는 가려져 있습니다.</figcaption>
+</figure>
+
+<p><a href="https://docs.tossplace.com/reference/open-api/webhook.html">공식 웹훅 설정 안내</a></p>
+<h3>서버에 네 값 저장하기</h3>
+<p>서버 운영 담당자가 서버의 비밀값 설정에 다음 값을 저장합니다. 중앙 관리 웹에서는 매장·기기·상품을 설정하고, 아래 인증값은 서버 운영 환경에서 관리합니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>서버 설정 이름</th>
+<th>가져오는 값</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TOSS_ACCESS_KEY</code></td>
+<td>API 인증 정보의 Access Key</td>
+</tr>
+<tr>
+<td><code>TOSS_SECRET_KEY</code></td>
+<td>같은 인증 정보의 Access Secret</td>
+</tr>
+<tr>
+<td><code>TOSS_WEBHOOK_SECRET</code></td>
+<td>위 웹훅의 Secret Key</td>
+</tr>
+<tr>
+<td><code>TOSS_APP_ID</code></td>
+<td>해당 API 앱의 ID 문자열. 실제 웹훅의 <code>app</code> 값과 일치하는 값</td>
+</tr>
+</tbody></table>
+</div>
+<p>운영 서버가 Cloudflare Worker이면 해당 Worker의 <strong>Settings → Variables and Secrets</strong>에서 세 키를 비밀값으로 저장하고 앱 ID도 등록한 뒤 변경을 배포합니다. 위 값을 저장한 후 중앙 관리에 다시 접속해 <strong>토스 서버 설정 있음</strong>을 확인합니다. 이어서 대상 매장에서 서비스 코드를 연결하고 실제 완료 주문의 준비량을 확인합니다.</p>
+</details>
+
+<details>
+<summary>개발 테스트 매장 준비하고 POS 앱·현금 주문 시험하기</summary>
+
+<h3>테스트 매장과 POS 로그인 정보 확인</h3>
+<ol>
+<li>개발자센터 <strong>테스트 가맹점 관리</strong>에서 시험할 기존 매장을 선택합니다. 새 매장이 필요하면 화면의 <strong>직접 만들기</strong> 또는 <strong>불러오기</strong>로 등록합니다.</li>
+<li>해당 매장의 <strong>가맹점 ID (MerchantId)</strong> 값을 중앙 시험 매장의 <strong>토스 가맹점 ID</strong>에 입력·저장합니다.</li>
+<li>매장 상세의 <strong>토스 POS/프론트 로그인 정보</strong>에서 매장고유번호·사업자등록번호·휴대폰번호를 확인합니다.</li>
+<li><a href="https://tossplace.com/product/pos">Toss POS</a>를 설치하고 이 정보를 입력해 테스트 매장으로 로그인합니다.</li>
+<li>개발자센터의 같은 매장 상세에서 사용할 <strong>API 앱</strong>의 사용 여부를 <strong>ON</strong>으로 설정하고 저장된 상태를 확인합니다.</li>
+</ol>
+<figure class="guide-figure">
+<a href="/pos/images/toss-test-apps.jpg" target="_blank" rel="noopener">
+<img src="/pos/images/toss-test-apps.jpg" alt="Toss 화면 7 · 테스트 매장 상세에서 사용할 API 앱과 시험용 POS 앱의 사용 여부를 켭니다." loading="lazy" width="700" height="168">
+</a>
+<figcaption>Toss 화면 7 · 테스트 매장 상세에서 사용할 API 앱과 시험용 POS 앱의 사용 여부를 켭니다.</figcaption>
+</figure>
+
+
+<h3>리필 코드 테스트 POS 앱 준비</h3>
+<p><strong>리필 코드 테스트</strong>는 개발 담당자가 준비한 시험용 POS 앱입니다. 이 메뉴로 시험하려면 해당 시험 매장용 앱 파일과 매장 ID를 담당자에게 받습니다.</p>
+<ol>
+<li>개발자센터 <strong>내 애플리케이션</strong>에서 시험용 <strong>POS 앱</strong>을 엽니다. 새 앱은 타입 <strong>포스</strong>, 이름, ID, 회사명으로 등록합니다.</li>
+<li>앱 정보의 <strong>ACL (URL)</strong> 항목에 <code>https://refill.endet.xyz</code>를 등록하고 저장된 주소를 확인합니다. 이 앱의 서비스 코드는 앞의 Open API 앱과 별도로 확인합니다.</li>
+<li>해당 앱의 <strong>테스트 단말기 관리 → 단말기 등록</strong>에 시험할 POS의 단말 식별자를 등록합니다. 단말 식별자는 설치 담당자와 해당 POS에서 확인하고, 등록 목록에 같은 값이 표시되는지 확인합니다.</li>
+<li><strong>개발 배포 → 개발용 파일 추가</strong>로 해당 시험 매장용 앱 파일을 올리고 배포합니다. 배포 목록에서 해당 버전이 <strong>배포됨</strong>인지 확인합니다.</li>
+<li><strong>테스트 가맹점 관리 → 해당 매장 → 애플리케이션</strong>에서 시험용 POS 앱의 사용 여부를 <strong>ON</strong>으로 설정합니다.</li>
+<li>Toss POS를 새로고침하거나 종료 후 다시 실행하고 <strong>좌측 상단 메뉴 → 기타설정 → 외부 서비스 설정 → 리필 코드 테스트</strong>가 보이는지 확인합니다.</li>
+</ol>
+<h3>현금 시험 주문</h3>
+<ol>
+<li>중앙 <strong>상품 연결</strong>에서 <strong>연결 기준: 상품 코드</strong>를 선택해 <code>device-test-100g</code> / 100g, <code>device-test-500g</code> / 500g 두 시험 상품을 같은 기기에 연결합니다.</li>
+<li>POS의 <strong>리필 코드 테스트</strong>를 열고, 기존 카테고리가 있는 할인 없는 빈 주문에서 <strong>100g × 10 · 1,000원</strong>을 누릅니다. <strong>1종 주문 추가 완료 · 1,000원</strong>과 주문 수량 10을 확인합니다.</li>
+<li>POS 기본 결제에서 <strong>현금 → 현금영수증 미발급</strong>으로 해당 시험 주문을 완료합니다.</li>
+<li>기기에 1,000g 준비·중앙 대기 삭제를 확인하고 기기에서 시작·완료를 확인합니다.</li>
+<li>새 빈 주문으로 <strong>500g × 2 · 1,000원</strong>, <strong>100g × 10 + 500g × 2 · 2,000원</strong>도 각각 1,000g·2,000g인지 확인합니다.</li>
+</ol>
+<p><a href="https://docs.tossplace.com/guide/pos-integration/plugin/test-merchant.html">테스트 매장 공식 안내</a> · <a href="https://docs.tossplace.com/guide/pos-integration/plugin/deploy.html">POS 앱 개발 배포 공식 안내</a></p>
+</details>
+
+</section>
+<section id="daily">
+<h2>10. 평소 사용하기</h2>
+<p>리필 상품 <strong>결제 완료 → 기기 준비량 확인 → 용기 놓기 → 리필 시작 → 기기 완료 확인</strong> 순서로 사용합니다. 일시정지·재개·정지는 기존 기기의 리필 조작을 사용합니다.</p>
+<p>스위치 운전을 설정한 기기는 준비 후 <strong>OFF → ON</strong>으로 시작합니다. 진행 중 OFF는 일시정지, 다시 ON은 남은 양 재개입니다. 준비량 수신 때 스위치가 이미 ON이면 먼저 OFF로 바꾼 후 ON으로 시작합니다. 완료 후에도 다음 사용을 위해 OFF로 돌립니다.</p>
+<p>Display에서 다른 기능을 사용하려면 우측 상단을 5번 터치해 홈으로 돌아갑니다. 홈의 <strong>POS</strong> 버튼으로 POS 화면에 다시 들어갈 수 있습니다. 일반 리필과 기기 Web도 사용할 수 있습니다.</p>
+<p>중앙 관리 목록은 <strong>새로고침</strong>으로 갱신합니다.</p>
+<p>상품 용량이나 기기를 바꿀 때는 <strong>상품 연결 → 수정 → 변경 저장</strong>을 사용합니다. <strong>이 상품 연결 사용</strong>을 해제하면 <strong>중지</strong>, 다시 선택하면 <strong>사용 중</strong>으로 바뀝니다. 앞으로 보낼 주문에 변경 내용이 적용됩니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>정리할 항목</th>
+<th>메뉴</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>기기 이름·표시 단위</td>
+<td>
+<strong>리필 장치 → 수정 → 변경 저장</strong>
+</td>
+</tr>
+<tr>
+<td>상품 연결 삭제</td>
+<td>
+<strong>상품 연결 → 삭제 → 연결 삭제</strong>
+</td>
+</tr>
+<tr>
+<td>빈 매장 삭제</td>
+<td>
+<strong>매장 관리 → 삭제 → 매장 삭제</strong>. 기기가 등록된 매장은 먼저 설치 담당자와 정리 방법을 확인합니다.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="cancel">
+<h2>11. 준비 시간과 취소</h2>
+<p>준비 자동취소는 기본 <strong>30초</strong>, 일시정지 자동취소는 기본 <strong>60초</strong>입니다. 두 시간 모두 <strong>1~3,600초</strong>로 설정할 수 있습니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>설정할 화면</th>
+<th>경로와 저장</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Display</td>
+<td>
+<strong>관리 화면 → 디스펜스 → 준비 자동 취소 / 일시정지 자동 취소 → 변경</strong>
+</td>
+</tr>
+<tr>
+<td>기기 Web</td>
+<td>
+<strong>제품·리필 → 리필 설정 → 준비 자동 취소 (초, 공통) / 일시정지 자동 취소 (초, 공통) → 리필 설정 저장</strong>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>같은 설정이 일반·스위치·POS 리필에 적용됩니다. 준비 후 시작하지 않고 시간이 지나면 준비량이 해제됩니다. 기기를 재부팅해도 받은 준비량이 사라지므로 필요하면 담당자가 주문·기기 상태를 확인합니다.</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>취소할 대상</th>
+<th>사용할 조작</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>중앙 전달 대기에 남은 양</td>
+<td>
+<strong>전달 대기 → 미수신량 취소 → 미수신량 취소</strong>
+</td>
+</tr>
+<tr>
+<td>기기에 이미 표시된 준비량</td>
+<td>기기 준비 화면 <strong>취소 또는 준비 취소</strong></td>
+</tr>
+<tr>
+<td>진행 중인 리필</td>
+<td>기기 <strong>정지</strong>
+</td>
+</tr>
+<tr>
+<td>결제 취소·환불</td>
+<td>해당 매장의 Toss POS에서 처리</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>POS 결제를 취소했을 때도 기기의 준비·진행 상태를 확인해 필요한 취소·정지를 함께 합니다. 중앙에서 미수신량을 취소한 뒤에는 <strong>새로고침</strong>으로 해당 행이 제거됐는지 확인합니다.</p>
+</section>
+<section id="troubleshooting">
+<h2>12. 잘 안 될 때</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>증상</th>
+<th>바로 확인할 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>로그인 실패·만료</td>
+<td>본인 로그인 ID와 비밀번호로 다시 로그인합니다. 비밀번호를 잊었거나 계정이 비활성화되어 있으면 전체 관리자에게 확인합니다. 시도 횟수 제한 안내가 나오면 10분 후 시도합니다.</td>
+</tr>
+<tr>
+<td>상품 연결 버튼을 사용할 수 없음</td>
+<td>
+<strong>현재 매장</strong>을 확인하고 <strong>리필 장치</strong>를 먼저 등록합니다.</td>
+</tr>
+<tr>
+<td>100g 준비가 안 보이고 대기 행이 남음</td>
+<td>실제 기기에서 <strong>기기 설정 → POS 연동</strong>을 열어 POS 사용·공통 서버 주소·그 기기의 키·인터넷 연결을 확인합니다.</td>
+</tr>
+<tr>
+<td>대기 행은 사라졌으나 준비량이 안 보임</td>
+<td>기기 준비 시간이 지났거나 취소·재부팅이 있었는지 확인합니다. 준비 화면이 남아 있으면 <strong>취소</strong> 후 새 시험을 합니다.</td>
+</tr>
+<tr>
+<td>다른 기기에 양이 준비됨</td>
+<td>
+<strong>상품 연결 → 수정</strong>에서 대상 기기를 확인하고, 두 실제 기기에 입력한 키가 각각 맞는지 확인합니다.</td>
+</tr>
+<tr>
+<td>기존 미수신량 안내</td>
+<td>
+<strong>전달 대기</strong>에서 해당 기기와 양을 확인하고 수신 또는 미수신량 취소 후 다음 주문을 진행합니다.</td>
+</tr>
+<tr>
+<td>합산량 오류</td>
+<td>1개당 용량과 수량을 확인합니다. 기기별 합산량은 최대 4,000입니다.</td>
+</tr>
+<tr>
+<td>Toss 주문만 전달 안 됨</td>
+<td>현재 매장의 MerchantId·Open API 서비스 연결·상품 연결 기준과 입력한 상품명/상품 코드·옵션을 확인하고 서버 연동 담당자에게 해당 주문을 확인받습니다.</td>
+</tr>
+<tr>
+<td>
+<strong>토스 설정 필요</strong>
+</td>
+<td>서버 운영 담당자에게 Toss 설정을 확인받습니다.</td>
+</tr>
+<tr>
+<td>
+<strong>매장 ID 필요</strong>
+</td>
+<td>
+전체 관리자가 <strong>매장 관리 → 수정</strong>에서 그 매장의 MerchantId를 저장합니다.</td>
+</tr>
+<tr>
+<td>
+<strong>POS 지원 모델이 아닙니다.</strong>
+</td>
+<td>설치 담당자에게 기기의 POS 지원 모델·펌웨어를 확인받습니다.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="security">연결 키를 잃었거나 교체할 때</h3>
+<ol>
+<li>
+<strong>현재 매장</strong>에서 해당 매장을 선택합니다.</li>
+<li>
+<strong>리필 장치</strong>에서 대상 기기의 <strong>연결 키 재발급 → 새 키 발급</strong>을 누릅니다.</li>
+<li>새 키를 보관하고 해당 실제 기기의 POS 설정에 입력해 저장합니다.</li>
+<li>앞의 100g 시험으로 연결을 다시 확인합니다.</li>
+</ol>
+<p>재발급하면 이전 키와 연결이 종료됩니다. 키가 표시된 화면·파일은 관리자만 보관하고, 공유할 캡처에서는 키를 가립니다. 관리 작업을 마치면 <strong>로그아웃</strong>합니다.</p>
+</section>
+</article>
+</div>
+  </main>
+<footer class="site-footer">
+<a href="https://refill.endet.xyz/">endet.</a>
+<a href="https://refill.endet.xyz/pos-admin">POS 관리자</a>
+</footer>
+</body>
+</html>
