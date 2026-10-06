@@ -1,3 +1,67 @@
+# 4.0.0 관리자 설명서 작성 근거
+
+작성일: 2026-10-06. 설명서 표시 버전은 사용자 요청에 따라 `4.0.0`이며 구현 기준은
+펌웨어 `codex/v4.0.0-pos` HEAD `baf8318fedcf5d11f5d156eea44bf804b4fe2ec5`와
+현재 작업본 `4.0.0-alpha.11+261006`이다. 안정 출시나 전체 release gate 완료를 뜻하지 않는다.
+사이트는 clean `main` HEAD `9acd87eef159d81051e164b2323ebbf8da1936eb`에서 시작했고,
+origin/main fetch 및 fast-forward 확인 결과 동일했다. 기존 3.5.3 설명서·이미지,
+고객 안내·서비스 진입·POS 안내는 보존한다. 펌웨어 원본·버전·기기 설정은 변경하지 않는다.
+
+아래 경로는 펌웨어 저장소의 `pump_dispenser/` 기준이며 줄 번호는 작성 시 작업본 기준이다.
+
+| 설명 | 근거 |
+| --- | --- |
+| 현재 버전·검증 범위 | `firmware/controller/components/product_metadata/firmware_version.h:4`; `docs/governance/PROJECT_TRACKER.md:3`; `docs/quality/CONTROLLER_4_0_0_ALPHA_11_CHECKPOINT.md` |
+| R 삭제와 보정 이력 삭제 | `firmware/controller/products/controller_display/components/hmi_display/screen_calibration.c:993`; 정밀 상세 즉시 삭제 `:578` |
+| 보정 실측·저장·모델 선택·검증 | 같은 `screen_calibration.c`의 실제 callbacks와 `firmware/controller/components/controller_core/calibration_model.c`; 기존 상세 순서를 현재 코드로 대조 |
+| 중량·시간 리필 모드와 초 단위 프리셋 | `firmware/controller/products/controller_display/components/hmi_display/settings_page_accuracy.c:152` / `:224`; `settings_page_presets.c:36` / `:41` (같은 HMI 디렉터리) |
+| 종료 시 예상 잔량·누적 영구 저장 | `firmware/controller/components/controller_core/settings_manager.c:2310`; `pump_controller.c:137` |
+| 스위치 GPIO·ON 신호·입력 테스트·저장 | `firmware/controller/products/controller_display/components/hmi_display/settings_page_switch.c:115` |
+| 스위치 OFF 일시정지·ON 재개·종료 후 OFF 재무장 | `firmware/controller/components/controller_core/app_core_switch.c:268` |
+| 화면 절전·절전 대기 | `firmware/controller/products/controller_display/components/hmi_display/settings_page_admin.c:269`; `ui_manager.c:1999` / `:2057`; 1~1440분 `firmware/controller/components/controller_core/settings_manager.c:3172` |
+| 무선 통신·웹 서버·기기 접속 이름·주소/QR·지원 모델 POS | `firmware/controller/products/controller_display/components/hmi_display/settings_page_wireless.c:190` / `:202` / `:246` |
+| POS 대기·수신 시 준비 화면 표시 | `firmware/controller/products/controller_display/components/hmi_display/screen_main.c:453`; `ui_manager.c:6083` (같은 HMI 디렉터리) |
+| POS 설정·키 빈 입력 보존 | 같은 HMI `screen_settings.c:420` / `:436` |
+| 일반·POS 공통 준비 자동 취소 | `firmware/controller/components/controller_core/app_core_prepared_refill.c:74` / `:91` / `:112`; `app_core.c:303`; 화면 remaining_ms 조회 `screen_confirm.c:74` |
+| 준비 취소 범위·기본값 | `firmware/controller/components/controller_core/settings_manager.c:171` / `:3055`: 기본30초, 1~3600초 |
+| Web 보정 측정·저장·모델 선택·검증·삭제 | `firmware/controller/components/hmi_web/web/admin.html:78` / `:79` / `:84` / `:87` / `:88` |
+| Web 네트워크 저장과 적용 구분 | 같은 `admin.html:103` |
+| 기기 Web 메뉴·운영·잔량·제품정보 | `firmware/controller/components/hmi_web/web/admin.html:14` / `:23` / `:43` / `:58` |
+| Web OTA 단계·대상 검사·정상 부팅 확인 | 같은 `admin.html:154`; `admin.js:2287` / `:2332`; 관리자 인증 `firmware/controller/components/hmi_web/hmi_web_ota.c:96` |
+
+## 4.0 화면과 검증 범위
+
+HMI 이미지는 현행 실제 `hmi_display`와 LVGL을 ARM 네이티브 Preview로 렌더링한 800×480
+예시다. 이번 fresh rebuild는 LVGL 의존성 누락으로 실패했으며, 기존 ARM 네이티브
+Preview 실행 파일의 소스 SHA·mtime을 대조해 현재 소스와의 최신성을 확인하고 캡처했다.
+캘리브레이션 캡처는 legacy `삭제` 라벨 assertion과 현행 `R 삭제` 차이로 exit2였지만
+생성된 실제 현재 화면을 육안 확인했다. 말통 입력 legacy 시나리오는 입력·저장 후
+잔량 화면을 캡처하므로 `settings-reservoir.png`의 실제 잔량 버튼 화면으로 설명했으며,
+키패드 입력 화면으로 표시하지 않았다. 이 실패를 새 빌드 성공으로 기록하지 않는다.
+원본 PNG를 그리거나 재구성하지 않았다. 액체·튜브 번호, 출력 GPIO와 연결 정보는
+설명용 데이터이며 권장 설치값이 아니다. 초기 legacy 캡처 시나리오 실패 이미지와 제외 범위
+이미지는 사용하지 않고 실제 본문에서 참조하는 현재 화면만 보관한다. 일부 HMI 사이드 메뉴에
+제외 범위 항목이 보일 수 있지만 별도 사용법·이미지는 제공하지 않는다. 임의 픽셀 편집이나
+펌웨어 수정으로 메뉴를 제거하지 않았다.
+
+기기 Web 이미지 4장은 현행 `hmi_web/web` HTML·CSS·JS를 로컬 예시 API fixture와
+연결하여 브라우저에서 렌더링한 화면이다. fixture의 Controller 4.0.0 표시와 제품·잔량·
+POS 주소·연결 상태는 synthetic 예시다. 주소는 `example.invalid`이며 실제 연결 정보가 아니다.
+OTA는 파일을 선택하기 전 화면만 촬영했고 전송·적용·완료를 실행하거나 모의하지 않았다.
+최초 Web 보정 fixture의 0초·빈 시간 표시와 OTA 로그 응답 형식 오류는 각각 실제 API 필드의
+5초·3초/10초 예시와 빈 로그 배열로 바로잡은 뒤 재캡처·육안 확인했다. 최종 PNG에만 반영했고
+펌웨어 원본과 기기 설정은 변경하지 않았다.
+실제 기기·결제·토출 결과나 OTA 실행 결과를 뜻하지 않는다. 단위는 각 화면의 실제 표시를
+기준으로 설명하며, 터치 화면의 말통 입력 kg과 Web의 g/mL 입력을 구분한다.
+
+`node scripts/check.mjs`는 세 안내 본문의 앵커·대체 텍스트·PNG 실제 치수·원본 확대 링크,
+두 실제 관리자 버전의 왕복 이동·앵커 유지와 실패 처리, 공개 라우트를 검사한다.
+`worker/scripts/prepare-assets.mjs`는 명시된 공개 파일만 배포 자산으로 복사한다.
+3.5.3·고객·서비스 진입·POS 본문은 Git 기준 변경이 없는지 확인한다.
+브라우저 렌더링·실제 HTTP·배포 확인은 별도 결과로 보고하며 하드웨어 시험으로 확대하지 않는다.
+
+---
+
 # 3.5.3 설명서 작성 근거
 
 작성일: 2026-09-09. 펌웨어 기준은 `WS_Esp32_pump_dispenser_v3`의

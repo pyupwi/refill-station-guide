@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
@@ -8,6 +9,12 @@ import './check-simulator.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => readFileSync(resolve(root, path), 'utf8');
+// Pin the independently preserved 3.5.3 document and media.
+const preserved = createHash('sha256');
+for (const path of ['index.html', ...readdirSync(resolve(root, 'admin/3.5.3/images')).sort().map(name => `images/${name}`)]) {
+  preserved.update(path).update(readFileSync(resolve(root, 'admin/3.5.3', path)));
+}
+assert.equal(preserved.digest('hex'), '5ee3006ef2803375f944e55c91a91442e6171b8faa8444bfc553114fa30424c8', '3.5.3 independent document/media must remain unchanged');
 const manifest = JSON.parse(read('admin/versions.json'));
 assert(manifest.versions.includes(manifest.latest));
 assert.equal(new Set(manifest.versions).size, manifest.versions.length);
@@ -20,7 +27,10 @@ for (const path of pages) {
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
   assert.equal(new Set(ids).size, ids.length, `Duplicate anchors: ${path}`);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, path);
-  assert(!/저울|웹\s*서버|웹\s*관리|Web\s*(UI|Server)|사진 준비 중|image-placeholder|시간\s*모드/i.test(html), path);
+  assert(!/저울|사진 준비 중|image-placeholder/i.test(html), path);
+  if (path !== 'admin/4.0.0/index.html') {
+    assert(!/웹\s*서버|웹\s*관리|Web\s*(UI|Server)|시간\s*모드/i.test(html), path);
+  }
   for (const [, fragment] of html.matchAll(/href="#([^"]+)"/g)) {
     assert(ids.includes(fragment), `Missing anchor ${fragment} in ${path}`);
   }
@@ -30,16 +40,20 @@ for (const path of pages) {
   }
   const images = [...html.matchAll(/<img\b[^>]+>/g)];
   for (const [tag] of images) assert(/alt="[^"]*"/.test(tag), tag);
-  const screens = images.filter(([tag]) => /width="800"/.test(tag));
+  const screens = images.filter(([tag]) => /src="[^"]+\.png"/.test(tag));
   assert(screens.length > 0, `Screenshots missing: ${path}`);
   for (const [tag] of screens) {
     const src = /src="([^"]+)"/.exec(tag)[1];
-    assert(/alt="[^"]+"/.test(tag) && /width="800"/.test(tag) && /height="480"/.test(tag), tag);
+    assert(/alt="[^"]+"/.test(tag) && /loading="lazy"/.test(tag), tag);
     assert(html.includes(`href="${src}"`), `Full-size screenshot link missing: ${src}`);
     const png = readFileSync(resolve(root, dirname(path), src));
     assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', src);
-    assert.equal(png.readUInt32BE(16), 800, src);
-    assert.equal(png.readUInt32BE(20), 480, src);
+    assert.equal(Number(/width="(\d+)"/.exec(tag)?.[1]), png.readUInt32BE(16), src);
+    assert.equal(Number(/height="(\d+)"/.exec(tag)?.[1]), png.readUInt32BE(20), src);
+    if (path !== 'admin/4.0.0/index.html' || !src.includes('web-')) {
+      assert.equal(png.readUInt32BE(16), 800, src);
+      assert.equal(png.readUInt32BE(20), 480, src);
+    }
   }
   screenCount += screens.length;
 }
@@ -155,7 +169,7 @@ try {
     const redirect = await router.fetch(new Request(`https://refill.endet.xyz${prefix}?from=qr`), env);
     assert.equal(redirect.status, 308);
     assert.equal(redirect.headers.get('Location'), `https://refill.endet.xyz${prefix}/?from=qr`);
-    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2']) {
+    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/4.0.0/', '/4.0.0/images/main.png', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2']) {
       await router.fetch(new Request(`https://refill.endet.xyz${prefix}${suffix}?a=1`), env);
       const target = prefix === '/manual/user' && suffix === '/' ? '/user-guide' : `${directory}${suffix}`;
       assert.equal(observed.url, `https://refill.endet.xyz${target}?a=1`);
@@ -205,24 +219,40 @@ try {
 } finally { env.ASSETS.fetch = async request => { observed = request; return new Response('upstream'); }; }
 
 // Test version navigation without a browser or extra packages.
-async function checkVersions(payload, fail = false) {
-  const select = { value: '3.5.3', addEventListener: (_, cb) => select.change = cb,
+async function checkVersions(payload, fail = false, current = '3.5.3') {
+  const select = { value: current, addEventListener: (_, cb) => select.change = cb,
     replaceChildren: (...children) => select.children = children };
   const status = {};
-  const location = { href: 'https://refill.endet.xyz/manual/admin/3.5.3/', hash: '#precise',
+  const location = { href: `https://refill.endet.xyz/manual/admin/${current}/`, hash: '#precise',
     assign: url => location.assigned = String(url) };
   const context = { URL, location, Option: class { constructor(label, value, def, selected) { Object.assign(this, {label, value, selected}); } },
-    document: { body: { dataset: { version: '3.5.3' } }, querySelector: id => id === '#guide-version' ? select : status },
+    document: { body: { dataset: { version: current } }, querySelector: id => id === '#guide-version' ? select : status },
     fetch: async () => ({ ok: !fail, json: async () => payload }) };
   vm.runInNewContext(read('admin/versions.js'), context);
   await new Promise(setImmediate);
   return { select, status, location };
 }
-const valid = await checkVersions({ latest: '3.6.0', versions: ['3.6.0', '3.5.3'] });
-assert.equal(valid.select.children.length, 2);
-assert.equal(valid.select.children[1].selected, true);
-valid.select.value = '3.6.0'; valid.select.change();
-assert.equal(valid.location.assigned, 'https://refill.endet.xyz/manual/admin/3.6.0/#precise');
+assert.deepEqual(manifest, { latest: '4.0.0', versions: ['4.0.0', '3.5.3'] });
+for (const current of manifest.versions) {
+  const valid = await checkVersions(manifest, false, current);
+  assert.equal(valid.select.children.length, 2);
+  assert.equal(valid.select.children.find(option => option.value === current).selected, true);
+  const destination = manifest.versions.find(version => version !== current);
+  valid.select.value = destination; valid.select.change();
+  assert.equal(valid.location.assigned, `https://refill.endet.xyz/manual/admin/${destination}/#precise`);
+}
+const currentGuide = read('admin/4.0.0/index.html');
+for (const [, asset] of currentGuide.matchAll(/(?:href|src)="(images\/[^"]+)"/g)) {
+  assert(read('worker/scripts/prepare-assets.mjs').includes(`'admin/4.0.0/${asset}'`), `New administrator asset absent from Worker allowlist: ${asset}`);
+}
+assert(read('worker/scripts/prepare-assets.mjs').includes("'admin/4.0.0/index.html'"));
+assert(!/3\.5\.3과 달리|이전에는|변경 이력|정식 출시|stable/i.test(currentGuide));
+for (const id of ['overview', 'daily', 'calibration', 'quick', 'manual-calibration', 'precise', 'verification', 'calibration-records', 'accuracy', 'reservoir', 'dispense-settings', 'pump', 'system', 'care', 'troubleshooting', 'switch', 'network-web', 'ota', 'pos']) {
+  assert(currentGuide.includes(`id="${id}"`), `Missing 4.0 administrator topic: ${id}`);
+}
+for (const phrase of ['스위치 운전', '화면 절전', '기기 접속 이름', '준비 자동 취소', 'Web 관리', 'OTA', 'POS 사용']) {
+  assert(currentGuide.includes(phrase), `Missing current administrator instruction: ${phrase}`);
+}
 for (const [payload, fail] of [[{}, true], [{ latest: '../bad', versions: ['3.5.3', '../bad'] }, false]]) {
   const result = await checkVersions(payload, fail);
   assert(result.status.textContent.includes('현재 설명서는 계속 읽을 수 있습니다'));
