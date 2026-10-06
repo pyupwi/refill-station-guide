@@ -9,12 +9,12 @@ import './check-simulator.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = path => readFileSync(resolve(root, path), 'utf8');
-// Pin the independently preserved 3.5.3 document and media.
+// Pin preserved 3.5.3 media; both version documents may receive approved prose edits.
 const preserved = createHash('sha256');
-for (const path of ['index.html', ...readdirSync(resolve(root, 'admin/3.5.3/images')).sort().map(name => `images/${name}`)]) {
+for (const path of readdirSync(resolve(root, 'admin/3.5.3/images')).sort().map(name => `images/${name}`)) {
   preserved.update(path).update(readFileSync(resolve(root, 'admin/3.5.3', path)));
 }
-assert.equal(preserved.digest('hex'), '5ee3006ef2803375f944e55c91a91442e6171b8faa8444bfc553114fa30424c8', '3.5.3 independent document/media must remain unchanged');
+assert.equal(preserved.digest('hex'), 'bbd6415acc49122614a3f6335bfe465b18f78b3e17f089af8aecb9fa64d55866', '3.5.3 media must remain unchanged');
 const manifest = JSON.parse(read('admin/versions.json'));
 assert(manifest.versions.includes(manifest.latest));
 assert.equal(new Set(manifest.versions).size, manifest.versions.length);
