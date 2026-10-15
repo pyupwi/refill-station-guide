@@ -67,7 +67,7 @@ for (const url of [
   'https://refill.endet.xyz/pos/',
   'https://refill.endet.xyz/pos-admin',
 ]) assert(read('index.html').includes(url), `Landing link missing: ${url}`);
-assert.equal((read('index.html').match(/<a\b/g) || []).length, 4);
+assert.equal((read('index.html').match(/<a\b/g) || []).length, 5);
 const posGuide = read('pos/index.html');
 assert(posGuide.includes('<link rel="canonical" href="https://refill.endet.xyz/pos/">'));
 assert(posGuide.includes('href="/pos/styles.css"'));
@@ -80,7 +80,14 @@ for (const [, fragment] of posGuide.matchAll(/href="#([^"]+)"/g)) {
   assert(posIds.includes(fragment), `Missing POS guide anchor ${fragment}`);
 }
 assert(posGuide.includes('aria-label="POS 안내 목차"'));
-const posImageIds = ['login', 'account-management', 'account-settings', 'store-form', 'station-form', 'connection-info', 'device-pos-web', 'product-form', 'test-order', 'test-pending', 'device-pos-ready', 'test-received', 'stations-two', 'store-switch'];
+for (const text of ['Google 로그인과 회원 승인', '승인 대기', '회원·매장 권한 관리', 'POS 역할', '매장 배정']) {
+  assert(posGuide.includes(text), `Missing Google/POS access instructions: ${text}`);
+}
+assert(!/초기 비밀번호|내 비밀번호 변경|새 비밀번호|본인 로그인 ID/.test(posGuide), 'Obsolete POS password instructions');
+for (const name of ['login', 'account-management', 'account-settings']) {
+  assert(!posGuide.includes(`/pos/images/${name}.png`), `Obsolete POS login screenshot: ${name}`);
+}
+const posImageIds = ['store-form', 'station-form', 'connection-info', 'device-pos-web', 'product-form', 'test-order', 'test-pending', 'device-pos-ready', 'test-received', 'stations-two', 'store-switch'];
 const posImages = [...posGuide.matchAll(/<img\b[^>]+src="\/pos\/images\/([^"]+\.png)"[^>]*>/g)];
 assert.equal(posImages.length, posImageIds.length, 'POS guide screenshot count');
 for (const id of posImageIds) {
@@ -149,7 +156,7 @@ assert(atoms.includes('moov') && atoms.indexOf('moov') < atoms.indexOf('mdat'), 
 assert(movie.length <= 2 * 1024 * 1024, 'Use native range storage for larger videos');
 
 let observed;
-const env = { ASSETS: { fetch: async request => { observed = request; return new Response('upstream'); } } };
+const env = { POS_MEMBERSHIP: {fetch: async () => Response.json({authenticated: true, member: {status: 'approved'}})}, ASSETS: { fetch: async request => { observed = request; return new Response('upstream'); } } };
 const adminPage = new URL('https://refill.endet.xyz/manual/admin/3.5.3/');
 const adminCss = new URL('../styles.css', adminPage);
 const brandFiles = [
@@ -169,7 +176,7 @@ try {
     const redirect = await router.fetch(new Request(`https://refill.endet.xyz${prefix}?from=qr`), env);
     assert.equal(redirect.status, 308);
     assert.equal(redirect.headers.get('Location'), `https://refill.endet.xyz${prefix}/?from=qr`);
-    for (const suffix of ['/', '/styles.css', '/3.5.3/', '/4.0.0/', '/4.0.0/images/main.png', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2']) {
+    for (const suffix of (prefix === '/manual/user' ? ['/', '/styles.css', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2'] : ['/', '/styles.css', '/3.5.3/', '/4.0.0/', '/4.0.0/images/main.png', '/versions.json', '/assets/aeonik-wordmark-brand-700.svg', '/fonts/Geist-Variable.woff2'])) {
       await router.fetch(new Request(`https://refill.endet.xyz${prefix}${suffix}?a=1`), env);
       const target = prefix === '/manual/user' && suffix === '/' ? '/user-guide' : `${directory}${suffix}`;
       assert.equal(observed.url, `https://refill.endet.xyz${target}?a=1`);
@@ -178,7 +185,7 @@ try {
     assert.equal(observed.method, 'HEAD');
     assert.equal((await router.fetch(new Request(`https://refill.endet.xyz${prefix}/`, { method: 'POST' }), env)).status, 405);
   }
-  for (const path of ['/', '/shop/', '/manual/admin-old/', '/manual/user-old/']) {
+  for (const path of ['/shop/', '/manual/admin-old/', '/manual/user-old/']) {
     assert.equal((await router.fetch(new Request(`https://refill.endet.xyz${path}`), env)).status, 404);
   }
   env.ASSETS.fetch = async request => {
@@ -193,13 +200,13 @@ try {
       ['bytes=-0', 416, '', 'bytes */10'], ['bytes=0-1,4-5', 200, '0123456789', null],
       ['invalid', 200, '0123456789', null],
     ]) {
-      const partial = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/demo.mp4`, { headers: { Range: range } }), env);
+      const partial = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/admin/3.5.3/images/dispense-demo.mp4`, { headers: { Range: range } }), env);
       assert.equal(observed.headers.get('Range'), range);
       assert.equal(partial.status, status, range);
       assert.equal(partial.headers.get('Content-Range'), contentRange, range);
       assert.equal(await partial.text(), body, range);
     }
-    const stale = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/demo.mp4`, { headers: { Range: 'bytes=0-1', 'If-Range': '"old"' } }), env);
+    const stale = await router.fetch(new Request(`https://refill.endet.xyz${prefix}/admin/3.5.3/images/dispense-demo.mp4`, { headers: { Range: 'bytes=0-1', 'If-Range': '"old"' } }), env);
     assert.equal(stale.status, 200);
     assert.equal(await stale.text(), '0123456789');
   }
@@ -207,7 +214,7 @@ try {
     observed = request;
     return new Response('0123456789', { headers: { 'Content-Type': 'video/mp4' } });
   };
-  const missingLength = await router.fetch(new Request('https://refill.endet.xyz/manual/user/demo.mp4', {
+  const missingLength = await router.fetch(new Request('https://refill.endet.xyz/manual/user/admin/3.5.3/images/dispense-demo.mp4', {
     headers: { Range: 'bytes=0-1' },
   }), env);
   assert.equal(missingLength.status, 206);

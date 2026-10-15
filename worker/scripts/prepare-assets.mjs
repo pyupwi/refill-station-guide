@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const workerDir = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(workerDir, '..');
-const output = resolve(workerDir, '.assets');
+const pages = process.argv.includes('--pages');
+const output = resolve(sourceRoot, pages ? '.pages-public' : 'worker/.assets');
 const files = [
   '404.html', '_headers', '_redirects', 'index.html', 'user-guide.html',
   'pos/index.html', 'pos/styles.css',
@@ -75,7 +76,10 @@ const files = [
 ];
 
 rmSync(output, { recursive: true, force: true });
-for (const file of files) {
+const { isPublic } = await import('../src/index.js');
+const selected = pages ? files.filter(file => isPublic('/' + file) && !file.startsWith('_')) : files;
+if (pages) selected.push('_headers', '_worker.js');
+for (const file of selected) {
   const source = resolve(sourceRoot, file);
   if (!source.startsWith(`${sourceRoot}${sep}`) || !existsSync(source) || !lstatSync(source).isFile()) {
     throw new Error(`Missing public asset: ${file}`);
@@ -84,4 +88,4 @@ for (const file of files) {
   mkdirSync(dirname(target), { recursive: true });
   copyFileSync(source, target);
 }
-console.log(JSON.stringify({ copied_files: files.length, content_asset_files: files.length - 2, metadata_files: ['_headers', '_redirects'] }));
+console.log(JSON.stringify({ copied_files: selected.length, content_asset_files: selected.length - 2, metadata_files: pages ? ['_headers', '_worker.js'] : ['_headers', '_redirects'] }));
