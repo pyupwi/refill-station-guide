@@ -80,7 +80,7 @@ for (const [, fragment] of posGuide.matchAll(/href="#([^"]+)"/g)) {
   assert(posIds.includes(fragment), `Missing POS guide anchor ${fragment}`);
 }
 assert(posGuide.includes('aria-label="POS 안내 목차"'));
-for (const text of ['Google 로그인과 회원 승인', '승인 대기', '회원·매장 권한 관리', 'POS 역할', '매장 배정']) {
+for (const text of ['Google로 로그인', '승인 대기', '회원·매장 권한 관리', 'POS 역할', '매장 배정']) {
   assert(posGuide.includes(text), `Missing Google/POS access instructions: ${text}`);
 }
 assert(!/초기 비밀번호|내 비밀번호 변경|새 비밀번호|본인 로그인 ID/.test(posGuide), 'Obsolete POS password instructions');

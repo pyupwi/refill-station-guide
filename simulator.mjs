@@ -35,13 +35,13 @@ export function transition(state, event) {
 }
 
 const lessons = {
-  ready: ['01 · 양 선택', '얼마나 담아볼까요?', '숫자와 단위를 확인하세요. 양을 고른 다음 가상 화면을 한 번 탭해보세요.'],
-  confirm: ['02 · 시작 확인', '용기를 놓았다면, 시작.', '화면의 리필 시작을 눌러보세요. 실제 매장에서는 이 확인 화면 없이 바로 시작될 수도 있어요.'],
-  filling: ['03 · 리필 중', '잠깐 멈춰볼까요?', '진행 중인 화면을 탭하면 일시정지해요. 그대로 두면 정한 양에서 완료됩니다.'],
-  paused: ['04 · 일시정지', '계속할까요, 끝낼까요?', '리필재개를 누르면 이어서 채워요. 정지를 누르면 이번 리필을 끝내요.'],
-  complete: ['05 · 리필 완료', '마지막 방울까지 기다려요.', '완료 표시가 나와도 남은 액체가 떨어질 수 있어요. 용기를 바로 꺼내지 마세요.'],
-  waiting: ['06 · 다음 리필 준비', '처음 화면으로 돌아갈 때까지.', '대기가 끝나고 액체도 더 이상 떨어지지 않는 것을 확인한 뒤 용기를 꺼내세요.'],
-  stopped: ['이번 리필 종료', '리필을 멈췄어요.', '정지를 누르면 이어서 채우지 않고 이번 리필을 끝내요. 남은 액체가 멈췄는지 확인하세요.'],
+  ready: ['01', '리필량 선택', '양과 단위를 확인한 뒤 화면을 탭하세요.'],
+  confirm: ['02', '리필 시작', '용기 위치와 양을 확인하고 리필 시작을 누르세요.'],
+  filling: ['03', '리필 중', '일시정지하려면 화면을 탭하세요.'],
+  paused: ['04', '일시정지', '계속하려면 리필재개, 끝내려면 정지를 누르세요.'],
+  complete: ['05', '리필 완료', '남은 액체가 떨어질 수 있으니 용기를 바로 꺼내지 마세요.'],
+  waiting: ['06', '다음 리필 준비', '대기가 끝나고 액체가 더 이상 떨어지지 않으면 용기를 꺼내세요.'],
+  stopped: ['종료', '리필 정지', '액체가 더 이상 떨어지지 않는지 확인하세요.'],
 };
 
 export function mountSimulator(root) {
@@ -100,17 +100,17 @@ export function mountSimulator(root) {
     screen.hidden = mode !== 'practice';
     get('video-stage').hidden = mode !== 'video';
     get('sim-reset').hidden = mode !== 'practice';
-    get('stage-label').textContent = mode === 'practice' ? '가상 화면 · 직접 눌러보세요' : '3.5.3 화면 시연 · 약 17초 · 소리 없음';
+    get('stage-label').textContent = mode === 'practice' ? '가상 화면' : '3.5.3 화면 시연 · 약 17초 · 소리 없음';
     state = initialState(); previousPhase = undefined;
     if (mode === 'practice') { video.pause(); render(); }
     else {
       get('amount-controls').hidden = true;
-      get('lesson-label').textContent = '움직이는 화면으로 보기';
-      get('lesson-title').textContent = '한 번의 리필을 따라가요.';
-      get('lesson-text').textContent = '시작 → 일시정지 → 리필재개 → 완료와 대기 순서예요. 아래 재생 막대로 멈추거나 다시 볼 수 있어요.';
+      get('lesson-label').textContent = '영상';
+      get('lesson-title').textContent = '리필 시연';
+      get('lesson-text').textContent = '시작 · 일시정지 · 재개 · 완료';
       video.currentTime = 0;
       video.play().catch(() => {
-        if (mode === 'video') get('lesson-text').textContent = '영상 아래쪽의 재생 버튼을 눌러 시작하세요.';
+        if (mode === 'video') get('lesson-text').textContent = '재생 버튼을 누르세요.';
       });
     }
   }
