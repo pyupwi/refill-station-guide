@@ -124,9 +124,10 @@ Google 가입·로그인과 `/membership/*`, `/auth/*`, `/api/*`, `/pos-admin*`�
 
 Google OAuth 클라이언트 생성, 콜백 `https://refill.endet.xyz/auth/google/callback`,
 Worker secret과 D1 migration은 POS 저장소의
-[`pump_dispenser/services/pos_admin/README.md`](https://github.com/pyupwi/pump-dispenser/blob/main/pump_dispenser/services/pos_admin/README.md#google-회원과-pos-운영-권한)를 따른다.
-Google OAuth 클라이언트와 Cloudflare 배포 인증은 아직 연결되지 않았다. 아래 설정은
-배포 절차이며 실제 Google 가입·승인 또는 운영 배포 완료를 뜻하지 않는다.
+[`pump_dispenser/services/pos_admin/README.md`](https://github.com/pyupwi/WS_Esp32_pump_dispenser/blob/codex/v4.0.0-pos/pump_dispenser/services/pos_admin/README.md#google-회원과-pos-운영-권한)를 따른다.
+2026-10-15 Google 설정과 회원·POS Worker, 안내 Worker 및 Pages의 운영 배포를 완료했다.
+비로그인 보호 문서·POS 접근 차단과 고객 안내 공개를 운영 주소에서 확인했다.
+실제 Google 계정 로그인 결과는 POS 저장소 Tracker에 기록한다.
 
 ## 배포
 
@@ -181,9 +182,12 @@ npm run deploy
 Worker assets 메타데이터이며 README·소스 노트·스크립트·패키지는 포함하지 않는다.
 `main` 변경에 따른 Pages 자동 배포와 공식 도메인의 Worker 배포는 별개다. 정적 문서를
 수정할 때도 Worker assets를 갱신하여 별도 배포해야 한다. POS Worker의 Google 설정·DB
-migration·배포를 먼저 준비하고 안내 Worker의 서비스 바인딩을 확인한다. 인증 연결 전에는
-운영 배포를 실행하지 않았다.
+migration·배포를 먼저 준비하고 안내 Worker의 서비스 바인딩을 확인한다.
+2026-10-15 안내 Worker version은 `152d75fd-c3fd-43f1-87fb-460dd51a840f`,
+Pages production 배포는 `feb4fe01-a61a-4617-99ff-d9a11132f7b7`이다.
+승인 검사가 없던 과거 Pages 배포 21개는 삭제했으며 기존 배포 URL의 404를 확인했다.
 
 GitHub 원본 저장소는 현재 공개이며 사이트의 회원 검사로 GitHub 파일 열람까지 막을 수는
-없다. 이 작업은 저장소 공개 범위를 변경하지 않는다. 로컬 `python3 -m http.server`도
+없다. 사용자가 비공개 전환을 승인했지만 GitHub 앱과 별도 로그인 모두 설정 변경이
+403으로 거절되어 저장소 소유자의 웹 설정 변경이 남아 있다. 로컬 `python3 -m http.server`도
 권한 검사를 제공하지 않으므로 개발자 미리보기 용도로만 사용한다.
