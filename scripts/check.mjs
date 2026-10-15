@@ -80,7 +80,7 @@ for (const [, fragment] of posGuide.matchAll(/href="#([^"]+)"/g)) {
   assert(posIds.includes(fragment), `Missing POS guide anchor ${fragment}`);
 }
 assert(posGuide.includes('aria-label="POS 안내 목차"'));
-for (const text of ['Google 로그인과 회원 승인', '승인 대기', '회원·매장 권한 관리', 'POS 역할', '매장 배정']) {
+for (const text of ['Google로 로그인', '승인 대기', '회원 관리', 'POS 운영 권한', '담당 매장']) {
   assert(posGuide.includes(text), `Missing Google/POS access instructions: ${text}`);
 }
 assert(!/초기 비밀번호|내 비밀번호 변경|새 비밀번호|본인 로그인 ID/.test(posGuide), 'Obsolete POS password instructions');
@@ -257,7 +257,7 @@ assert(!/3\.5\.3과 달리|이전에는|변경 이력|정식 출시|stable/i.tes
 for (const id of ['overview', 'daily', 'calibration', 'quick', 'manual-calibration', 'precise', 'verification', 'calibration-records', 'accuracy', 'reservoir', 'dispense-settings', 'pump', 'system', 'care', 'troubleshooting', 'switch', 'network-web', 'ota', 'pos']) {
   assert(currentGuide.includes(`id="${id}"`), `Missing 4.0 administrator topic: ${id}`);
 }
-for (const phrase of ['스위치 운전', '화면 절전', '기기 접속 이름', '준비 자동 취소', 'Web 관리', 'OTA', 'POS 사용']) {
+for (const phrase of ['스위치 운전', '화면 절전', '기기 접속 이름', '준비 자동 취소', '웹 관리', '펌웨어 업데이트', 'POS 사용']) {
   assert(currentGuide.includes(phrase), `Missing current administrator instruction: ${phrase}`);
 }
 for (const [payload, fail] of [[{}, true], [{ latest: '../bad', versions: ['3.5.3', '../bad'] }, false]]) {

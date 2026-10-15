@@ -73,10 +73,11 @@ try {
   modes[1].fire('click'); timer();
   assert.equal(screen.hidden, true); assert.equal(played, 1);
   modes[0].fire('click'); assert.equal(screen.dataset.phase, 'ready'); assert(paused >= 2);
+  const practiceTitle = get('lesson-title').textContent;
   get('demo-video').play = () => Promise.reject(new Error('Autoplay unavailable'));
   modes[1].fire('click'); modes[0].fire('click');
   await Promise.resolve();
-  assert.equal(get('lesson-title').textContent, '얼마나 담아볼까요?', 'Late media errors must not replace practice instructions');
+  assert.equal(get('lesson-title').textContent, practiceTitle, 'Late media errors must not replace practice instructions');
   tap.fire('click'); get('sim-primary').fire('click');
   get('sim-reset').fire('click'); timer(); assert.equal(screen.dataset.phase, 'ready');
   dispose(); assert.equal(timer, null);
