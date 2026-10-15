@@ -35,13 +35,13 @@ export function transition(state, event) {
 }
 
 const lessons = {
-  ready: ['01', '리필량 선택', '양과 단위를 확인한 뒤 화면을 탭하세요.'],
-  confirm: ['02', '리필 시작', '용기 위치와 양을 확인하고 리필 시작을 누르세요.'],
-  filling: ['03', '리필 중', '일시정지하려면 화면을 탭하세요.'],
-  paused: ['04', '일시정지', '계속하려면 리필재개, 끝내려면 정지를 누르세요.'],
-  complete: ['05', '리필 완료', '남은 액체가 떨어질 수 있으니 용기를 바로 꺼내지 마세요.'],
-  waiting: ['06', '다음 리필 준비', '대기가 끝나고 액체가 더 이상 떨어지지 않으면 용기를 꺼내세요.'],
-  stopped: ['종료', '리필 정지', '액체가 더 이상 떨어지지 않는지 확인하세요.'],
+  ready: ['01', '리필량 선택', '양과 단위를 확인하고 화면을 누르세요.'],
+  confirm: ['02', '리필 시작', '용기를 놓고 리필 시작을 누르세요.'],
+  filling: ['03', '리필 중', '잠깐 멈추려면 화면을 누르세요.'],
+  paused: ['04', '일시정지', '계속 채우려면 리필재개, 그만 채우려면 정지를 누르세요.'],
+  complete: ['05', '리필 완료', '남은 액체가 떨어질 수 있습니다. 용기를 잠시 그대로 두세요.'],
+  waiting: ['06', '다음 리필 준비', '처음 화면으로 돌아오고 액체가 다 떨어지면 용기를 꺼내세요.'],
+  stopped: ['종료', '리필 정지', '액체가 다 떨어지면 용기를 꺼내세요.'],
 };
 
 export function mountSimulator(root) {
@@ -64,7 +64,7 @@ export function mountSimulator(root) {
     get('sim-hint').textContent = { ready: '위/아래로 밀어 조절, 누르면 시작', filling: '화면을 누르면 일시정지', complete: '잠시 후 이전 화면으로 돌아갑니다', stopped: '잠시 후 이전 화면으로 돌아갑니다' }[phase] || '';
     get('sim-liquid').style.height = `${['complete', 'waiting'].includes(phase) ? 100 : progress || phase === 'stopped' ? percent : amount / 3000 * 100}%`;
     tap.hidden = !['ready', 'filling'].includes(phase);
-    tap.setAttribute('aria-label', phase === 'ready' ? `${amount} g으로 리필 시작 확인. 위아래 방향키로 양을 조절할 수 있습니다.` : '리필 일시정지');
+    tap.setAttribute('aria-label', phase === 'ready' ? `${amount} g 리필. 누르면 시작을 확인합니다. 위아래 방향키로 양을 바꿀 수 있습니다.` : '리필 일시정지');
     actions.hidden = !['confirm', 'paused'].includes(phase);
     primary.textContent = phase === 'paused' ? '리필재개' : '리필 시작';
     secondary.textContent = phase === 'paused' ? '정지' : '취소';
@@ -100,14 +100,14 @@ export function mountSimulator(root) {
     screen.hidden = mode !== 'practice';
     get('video-stage').hidden = mode !== 'video';
     get('sim-reset').hidden = mode !== 'practice';
-    get('stage-label').textContent = mode === 'practice' ? '가상 화면' : '3.5.3 화면 시연 · 약 17초 · 소리 없음';
+    get('stage-label').textContent = mode === 'practice' ? '연습' : '소리 없는 동영상';
     state = initialState(); previousPhase = undefined;
     if (mode === 'practice') { video.pause(); render(); }
     else {
       get('amount-controls').hidden = true;
-      get('lesson-label').textContent = '영상';
-      get('lesson-title').textContent = '리필 시연';
-      get('lesson-text').textContent = '시작 · 일시정지 · 재개 · 완료';
+      get('lesson-label').textContent = '동영상';
+      get('lesson-title').textContent = '리필 사용법';
+      get('lesson-text').textContent = '';
       video.currentTime = 0;
       video.play().catch(() => {
         if (mode === 'video') get('lesson-text').textContent = '재생 버튼을 누르세요.';
