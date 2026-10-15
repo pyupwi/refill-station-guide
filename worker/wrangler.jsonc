@@ -2,12 +2,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "refill-user-guide-router",
   "main": "src/index.js",
+  "workers_dev": false,
+  "preview_urls": false,
   "compatibility_date": "2026-07-14",
   "assets": {
     "directory": ".assets",
     "binding": "ASSETS",
-    "run_worker_first": ["/manual/*"]
+    "run_worker_first": true
   },
+  "services": [{ "binding": "POS_MEMBERSHIP", "service": "refill-pos-admin" }],
   "routes": [
     {
       "pattern": "refill.endet.xyz/*",

@@ -8,6 +8,8 @@
   "scripts": {
     "check": "node --check src/index.js",
     "prepare-assets": "node scripts/prepare-assets.mjs",
+    "prepare-pages": "node scripts/prepare-assets.mjs --pages",
+    "check-membership": "node ../scripts/check-membership-gate.mjs",
     "predev": "npm run prepare-assets",
     "dev": "wrangler dev --local",
     "predeploy": "npm run prepare-assets",

@@ -2,3 +2,4 @@
 .wrangler/
 node_modules/
 worker/.assets/
+.pages-public/
