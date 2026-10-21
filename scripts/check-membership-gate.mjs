@@ -14,6 +14,11 @@ const env = {
   ASSETS: {fetch: async request => {assets++; return new Response(new URL(request.url).pathname, {headers: {'Cache-Control': 'public, max-age=999', 'Content-Type': 'text/html'}});}},
 };
 const fetch = (path, options) => router.fetch(new Request('https://refill.endet.xyz' + path, options), env);
+const productAssets = [
+  '/product.css',
+  '/assets/product/penguin-usecase.webp', '/assets/product/standing-usecase.webp',
+  '/assets/product/event-usecase.webp', '/assets/product/refill-qr.svg',
+];
 const restricted = [
   '/manual/admin', '/manual/admin/', '/manual/admin/4.0.0/', '/manual/admin/versions.json',
   '/manual/admin/assets/aeonik-wordmark-brand-700.svg', '/manual/admin/3.5.3/images/dispense.png',
@@ -56,6 +61,18 @@ for (const path of ['/', '/manual/user/', '/user-guide.html', '/manual/user/styl
   assert.equal((await fetch(path)).status, 200, path);
   assert.equal(calls, before, 'Public guide must work during membership outage');
 }
+for (const [handler, origin] of [[router, 'https://refill.endet.xyz'], [pages, 'https://refill-station-guide.pages.dev']]) {
+  for (const path of productAssets) {
+    const before = calls;
+    const response = await handler.fetch(new Request(origin + path), env);
+    assert.equal(response.status, 200, path);
+    assert.equal(await response.text(), path, 'Product asset must reach its exact static path');
+    assert.equal(calls, before, 'Product assets must work during membership outage');
+    assert.equal((await handler.fetch(new Request(origin + path, {method: 'HEAD'}), env)).status, 200, path);
+    assert.equal((await handler.fetch(new Request(origin + path, {method: 'POST'}), env)).status, 405, path);
+  }
+  assert.equal((await handler.fetch(new Request(origin + '/assets/product/private.txt'), env)).status, 404, 'Do not make the entire product directory public');
+}
 for (const path of ['/worker/src/index.js', '/README.md', '/scripts/check.mjs', '/.git/config', '/manual/user/worker/src/index.js']) {
   assert.equal((await fetch(path)).status, 404, path);
 }
@@ -97,4 +114,4 @@ const workerConfig = JSON.parse(readFileSync(new URL('../worker/wrangler.jsonc',
 assert.equal(workerConfig.assets.run_worker_first, true);
 assert.equal(workerConfig.workers_dev, false);
 assert.equal(workerConfig.preview_urls, false);
-console.log('PASS: membership gate, encoded aliases/traversal, outage, immediate revocation, private caching, source denial, Pages origin and exact customer media allowlist.');
+console.log('PASS: membership gate, encoded aliases/traversal, outage, immediate revocation, private caching, source denial, Pages origin, product assets and exact customer media allowlist.');

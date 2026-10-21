@@ -8,6 +8,9 @@ const pages = process.argv.includes('--pages');
 const output = resolve(sourceRoot, pages ? '.pages-public' : 'worker/.assets');
 const files = [
   '404.html', '_headers', '_redirects', 'index.html', 'user-guide.html',
+  'product.css',
+  'assets/product/penguin-usecase.webp', 'assets/product/standing-usecase.webp',
+  'assets/product/event-usecase.webp', 'assets/product/refill-qr.svg',
   'pos/index.html', 'pos/styles.css',
   'pos/images/login.png', 'pos/images/account-management.png', 'pos/images/account-settings.png', 'pos/images/store-form.png', 'pos/images/station-form.png',
   'pos/images/connection-info.png', 'pos/images/device-pos-web.png', 'pos/images/product-form.png',

@@ -6,6 +6,9 @@ const GUIDES = [
 const PUBLIC = new Set([
   '/', '/index', '/index.html', '/user-guide', '/user-guide.html', '/404.html',
   '/styles.css', '/simulator.mjs', '/demo.ko.vtt',
+  '/product.css',
+  '/assets/product/penguin-usecase.webp', '/assets/product/standing-usecase.webp',
+  '/assets/product/event-usecase.webp', '/assets/product/refill-qr.svg',
   '/assets/aeonik-hello-brand-700.svg', '/assets/aeonik-wordmark-brand-700.svg',
   '/fonts/Geist-Variable.woff2', '/fonts/OFL.txt',
   ...['dispense.png', 'dispense-demo.mp4', 'confirm.png', 'progress.png', 'paused.png', 'result.png', 'wait.png'].map(name => '/admin/3.5.3/images/' + name),

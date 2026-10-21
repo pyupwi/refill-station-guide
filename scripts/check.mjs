@@ -61,13 +61,24 @@ for (const version of manifest.versions) {
   assert(/^\d+\.\d+\.\d+$/.test(version));
   assert(read(`admin/${version}/index.html`).includes(`data-version="${version}"`));
 }
-for (const url of [
-  'https://refill.endet.xyz/manual/user/',
-  'https://refill.endet.xyz/manual/admin/',
-  'https://refill.endet.xyz/pos/',
-  'https://refill.endet.xyz/pos-admin',
-]) assert(read('index.html').includes(url), `Landing link missing: ${url}`);
-assert.equal((read('index.html').match(/<a\b/g) || []).length, 5);
+const landing = read('index.html');
+assert.equal((landing.match(/<h1[ >]/g) || []).length, 1, 'Product landing needs one heading');
+assert(/모듈형/.test(landing) && /리필/.test(landing), 'Product introduction missing');
+const landingLinks = [...landing.matchAll(/<a\b[^>]*href="([^"]+)"/g)].map(([, href]) => new URL(href, 'https://refill.endet.xyz/'));
+assert(!landingLinks.some(url => url.origin === 'https://refill.endet.xyz' && /^\/(?:manual|admin|pos|pos-admin|membership|auth)(?:[/?#-]|$)/.test(url.pathname)), 'Product landing must not link to service submenus');
+assert(landingLinks.some(url => url.protocol === 'https:' && (url.hostname === 'forms.gle' || (url.hostname === 'docs.google.com' && url.pathname.startsWith('/forms/')))), 'Contact CTA needs the published Google Form URL');
+assert(/<a\b[^>]*href="https:\/\/refill\.endet\.xyz\/?"[^>]*>[\s\S]*?<img\b[^>]*src="\/?assets\/product\/refill-qr\.svg"[\s\S]*?<\/a>/.test(landing), 'QR must link to https://refill.endet.xyz');
+const productAssets = [
+  'product.css',
+  'assets/product/penguin-usecase.webp', 'assets/product/standing-usecase.webp',
+  'assets/product/event-usecase.webp', 'assets/product/refill-qr.svg',
+];
+for (const file of productAssets) {
+  assert(existsSync(resolve(root, file)), `Product asset missing: ${file}`);
+  assert(landing.includes(file), `Product asset not used: ${file}`);
+  assert(read('worker/scripts/prepare-assets.mjs').includes(`'${file}'`), `Product asset absent from deployment bundle: ${file}`);
+}
+for (const [tag] of landing.matchAll(/<img\b[^>]+>/g)) assert(/alt="[^"]+"/.test(tag), `Product image needs alternate text: ${tag}`);
 const posGuide = read('pos/index.html');
 assert(posGuide.includes('<link rel="canonical" href="https://refill.endet.xyz/pos/">'));
 assert(posGuide.includes('href="/pos/styles.css"'));

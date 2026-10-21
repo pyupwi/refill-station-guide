@@ -1,12 +1,19 @@
-# 리필 스테이션 설명서
+# 모듈형 리필스테이션 제품 소개와 설명서
 
-- 서비스 진입: https://refill.endet.xyz/
+- 제품 소개: https://refill.endet.xyz/
 - 고객: https://refill.endet.xyz/manual/user/
 - 기기 관리자: https://refill.endet.xyz/manual/admin/
 - 4.0.0 고정 설명서: https://refill.endet.xyz/manual/admin/4.0.0/
 - 3.5.3 고정 설명서: https://refill.endet.xyz/manual/admin/3.5.3/
 - POS 관리자: https://refill.endet.xyz/pos-admin
 - Pages 원본: https://refill-station-guide.pages.dev/
+
+첫 화면은 모듈형 리필스테이션 제품 소개다. 펭귄형의 어린이 체험 공간, 스탠딩형의
+제로웨이스트 매장, 말통 수납형의 행사장 활용 이미지와 주문자 요청에 맞춘 제작 안내를
+제공한다. 13인치 iPad에서 한 화면으로 읽도록 구성하며 작은 모바일 화면에서는 세로로
+이어진다. QR은 `https://refill.endet.xyz`로 연결하고 문의 버튼은 Google 설문으로 연결한다.
+소개 화면에는 설명서·관리자·POS·로그인 메뉴 링크를 두지 않는다. 기존 서비스의 주소와
+회원 접근 정책은 유지한다. 활용 이미지는 모델에 기반한 연출 이미지다.
 
 고객 안내는 디스펜스 이용만 설명한다. 4.0.0 관리자 안내는 터치 화면과 기기 Web의
 운영·보정·설정·취급, 스위치·절전·네트워크·OTA·선택 POS 연결을 설명한다.
@@ -16,7 +23,9 @@
 
 ## 파일 구성
 
-- `index.html`: 제품 이름과 고객·기기 관리자·POS 안내·POS 관리자 링크
+- `index.html`: 세 가지 모델의 제품 소개, 활용 이미지, QR 및 Google 설문 문의 링크
+- `product.css`: 제품 소개의 반응형 스타일
+- `assets/product/`: 세 모델의 활용 이미지와 `refill-qr.svg`
 - `user-guide.html`: 고객 안내 (공개 주소 `/manual/user/`)
 - `pos/index.html`: POS 등록·사용·테스트 안내 (승인 회원 주소 `/pos/`)
 - `pos/styles.css`: POS 안내의 인쇄·목차·표 스타일
@@ -64,15 +73,24 @@
 
 ```sh
 python3 -m http.server 8767 --bind 127.0.0.1
-# 서비스 진입: http://127.0.0.1:8767/
+# 제품 소개: http://127.0.0.1:8767/
 # 고객 원본 파일: http://127.0.0.1:8767/user-guide.html
 # 관리자: http://127.0.0.1:8767/admin/4.0.0/
 node scripts/check.mjs
+node scripts/check-membership-gate.mjs
+node worker/scripts/prepare-assets.mjs
+node worker/scripts/prepare-assets.mjs --pages
 ```
 
-`check.mjs`는 설명서 앵커·파일 연결·제외 범위, 스크린샷 크기·대체 텍스트·확대 링크,
+`check.mjs`는 제품 소개·하위 메뉴 링크 제거·Google 설문 링크·QR 링크·제품 자산,
+설명서 앵커·파일 연결·제외 범위, 스크린샷 크기·대체 텍스트·확대 링크,
 버전 이동과 실패 처리,
-Worker의 경로와 리다이렉트를 확인한다. `node scripts/check-membership-gate.mjs`는 미로그인·미승인·승인 회수·인증 장애, 인코딩된 별칭·경로 우회, 비공개 캐시 헤더, Pages 원본 차단과 공개 미디어 목록을 확인한다. 두 실제 버전 사이의 왕복 이동과 앵커 유지를 검사한다. 화면 렌더링 또는 실제 펌프의 동작·토출 정확도를 검증하는 검사는 아니다.
+Worker의 경로와 리다이렉트를 확인한다. `node scripts/check-membership-gate.mjs`는 미로그인·미승인·승인 회수·인증 장애, 인코딩된 별칭·경로 우회, 비공개 캐시 헤더, Pages 원본 차단과 공개 미디어 목록을 확인한다. 제품 CSS·이미지·QR은 Worker와 Pages에서 인증 장애 중에도 열리며 지정하지 않은 제품 파일은 차단되는지 검사한다. 두 실제 버전 사이의 왕복 이동과 앵커 유지를 검사한다. 화면 렌더링 또는 실제 펌프의 동작·토출 정확도를 검증하는 검사는 아니다.
+
+출시 전 브라우저에서 13인치 iPad의 가로·세로 화면과 작은 모바일 화면을 확인한다.
+QR을 스캔하여 실제 도메인이 열리는지, 문의 버튼이 공개된 Google 설문을 여는지 확인한다.
+새 제품 자산은 `worker/scripts/prepare-assets.mjs`, `worker/src/index.js`와 루트 `_worker.js`의
+명시적 목록에 함께 추가한다. 폴더 전체를 공개하는 규칙으로 바꾸지 않는다.
 고객 시뮬레이션 검사는 같은 명령에서 함께 실행하며, 양 제한·확인·일시정지·재개·정지·
 완료·대기·초기화와 스와이프/키보드 조작, 영상 전환, 백그라운드 중단을 확인한다.
 
@@ -108,7 +126,7 @@ node scripts/check.mjs
 
 ## 회원 접근과 POS 운영
 
-고객 안내와 서비스 첫 화면은 공개다. 기기 관리자 안내(`/manual/admin/*`), 직접 원본
+제품 소개와 제품 자산, 고객 안내는 공개다. 기기 관리자 안내(`/manual/admin/*`), 직접 원본
 별칭(`/admin/*`), POS 안내(`/pos/*`)는 Google 로그인 후 관리자 승인을 받은 회원만
 접근한다. 고객 안내에서 사용하는 3.5.3 이미지 6장과 시연 MP4 1개만 정확한 파일 목록으로
 공개한다. `/manual/user/*`로 관리자 파일에 접근해도 실제 목적지에서 같은 권한을 검사한다.
@@ -141,7 +159,7 @@ Cloudflare Pages 프로젝트는 `refill-station-guide`, GitHub 원본은
 - Build command: `node worker/scripts/prepare-assets.mjs --pages`
 - Build output directory: `.pages-public`
 
-이 선택적 빌드는 공개 콘텐츠 17개와
+이 선택적 빌드는 제품 소개 자산을 포함한 명시적 공개 콘텐츠와
 `_headers`, `_worker.js`만 복사한다. 관리자 문서·POS 안내·소스는 출력에 포함하지 않는다.
 현재 빌드 없이 `/`를 게시하는 Pages 설정에서도 루트 `_worker.js`가 모든 요청을 검사하여
 보호된 주소를 공식 도메인으로 이동시키고 README·스크립트·소스 등 허용되지 않은 파일을
