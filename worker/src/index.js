@@ -9,6 +9,7 @@ const PUBLIC = new Set([
   '/product.css',
   '/assets/product/penguin-usecase.webp', '/assets/product/standing-usecase.webp',
   '/assets/product/event-usecase.webp', '/assets/product/refill-qr.svg',
+  '/assets/product/refill-ipad-4k.png', '/assets/product/refill-ipad-sharp.pdf',
   '/assets/aeonik-hello-brand-700.svg', '/assets/aeonik-wordmark-brand-700.svg',
   '/fonts/Geist-Variable.woff2', '/fonts/OFL.txt',
   ...['dispense.png', 'dispense-demo.mp4', 'confirm.png', 'progress.png', 'paused.png', 'result.png', 'wait.png'].map(name => '/admin/3.5.3/images/' + name),

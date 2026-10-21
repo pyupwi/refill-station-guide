@@ -11,6 +11,7 @@ const files = [
   'product.css',
   'assets/product/penguin-usecase.webp', 'assets/product/standing-usecase.webp',
   'assets/product/event-usecase.webp', 'assets/product/refill-qr.svg',
+  'assets/product/refill-ipad-4k.png', 'assets/product/refill-ipad-sharp.pdf',
   'pos/index.html', 'pos/styles.css',
   'pos/images/login.png', 'pos/images/account-management.png', 'pos/images/account-settings.png', 'pos/images/store-form.png', 'pos/images/station-form.png',
   'pos/images/connection-info.png', 'pos/images/device-pos-web.png', 'pos/images/product-form.png',
